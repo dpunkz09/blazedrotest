@@ -1,0 +1,203 @@
+//
+//
+//	Author		Goddameit
+//	Version		2013/12/24 07:32 GMT+8
+//	Web__		http://goo.gl/0vY9GV
+//
+//
+prontera,150,160,4	script	FireWork#GODD	718,{
+	function	nName	;
+	function	gGID	;
+	function	uUarp	;
+	function	uUarpf	;
+	function	eEffect	;
+	function	eEffects	;
+	function	gGetxy	;
+	function	_s	;
+	doevent strnpcinfo(3)+"::OnEventDo";
+	end;
+OnInit:
+	//bindatcmd "rfk",strnpcinfo(3)+"::OnAtcommand";
+	//bindatcmd "effect",strnpcinfo(3)+"::OnAtcommand2";
+	for(.@i=1;.@i<=21;.@i++)
+		hideonnpc nName(.@i);
+	end;
+/*OnAtcommand2:
+	gGetxy;
+	uUarp(1,@g_m$,@g_x,@g_y);
+	sleep2 1000;
+	eEffect(1,atoi(.@atcmd_parameters$[0]));
+	sleep2 4000;
+	atcommand "@refresh";
+	end;
+OnAtcommand:*/
+OnEventDo:
+	if( $@doing )
+	{
+		dispbottom "Now using, please wait.";
+		end;
+	}
+	.d_name$=strcharinfo(0);
+	.d_charid=getcharid(0);
+	$@doing=1;
+	getmapxy(.gs_m$,.gs_x,.gs_y,0);
+	warp "guild_room",318,177;
+	while(1)
+	{
+		_s(10);
+		gGetxy;
+		if( .g_m$ == "guild_room" && .g_x == 318 && .g_y == 177 )
+			break;
+	}
+	sit;
+	detachrid;
+/////////////////////////////////////////////////////////
+	_s(50);
+	uUarpf(1,0,5);
+	uUarpf(2,-4,4);
+	uUarpf(3,-5,0);
+	uUarpf(4,-4,-4);
+	uUarpf(5,0,-5);
+	uUarpf(6,4,-4);
+	uUarpf(7,5,0);
+	uUarpf(8,4,4);
+	uUarpf(9,0,0);
+	for(.@i=14;.@i<=21;.@i++)
+		hideoffnpc nName(.@i);
+	_s(1);
+	uUarpf(14,13,5);
+	uUarpf(15,5,13);
+	uUarpf(16,-5,13);
+	uUarpf(17,-13,5);
+	uUarpf(18,-13,-5);
+	uUarpf(19,-5,-13);
+	uUarpf(20,5,-13);
+	uUarpf(21,13,-5);
+	_s(10);
+	eEffect(9,437);
+	_s(30);
+	eEffect(14,398);
+	eEffect(15,398);
+	eEffect(16,398);
+	eEffect(17,398);
+	eEffect(18,398);
+	eEffect(19,398);
+	eEffect(20,398);
+	eEffect(21,398);
+	_s(30);
+	Initnpctimer "Fire_Work_GODD#UN";
+	setarray .@e_f[0],518,98,206,207;
+	.@e_n=getarraysize(.@e_f);
+	for(.@j=1;.@j<=5;.@j++)
+		for(.@i=1;.@i<=8;.@i++)
+		{
+			uUarpf(10,rand(1,9),rand(1,9));
+			uUarpf(11,-rand(1,9),-rand(1,9));
+			uUarpf(12,rand(1,9),-rand(1,9));
+			uUarpf(13,-rand(1,9),rand(1,9));
+			_s(1);
+			if(rand(2)) eEffect(10,.@e_f[rand(.@e_n)]); else eEffects(10,.@e_f[rand(.@e_n)],1);
+			if(rand(2)) eEffect(11,.@e_f[rand(.@e_n)]); else eEffects(11,.@e_f[rand(.@e_n)],1);
+			if(rand(2)) eEffect(12,.@e_f[rand(.@e_n)]); else eEffects(12,.@e_f[rand(.@e_n)],1);
+			if(rand(2)) eEffect(13,.@e_f[rand(.@e_n)]); else eEffects(13,.@e_f[rand(.@e_n)],1);
+			eEffect(.@i,686);
+			eEffects(.@i,363,1);
+		}
+/////////////////////////////////////////////////////////
+	_s(50);
+	stopnpctimer "Fire_Work_GODD#UN";
+	warpchar .gs_m$,.gs_x,.gs_y,.d_charid;
+	for(.@i=1;.@i<=21;.@i++)
+		uUarp(.@i,"guild_room",0,0);
+	_s(10);
+	$@doing=0;
+	end;
+	function	nName	{
+		return "#FW_effect"+getarg(0);
+	}
+	function	gGID	{
+		return getnpcid(0,nName(getarg(0)));
+	}
+	function	uUarp	{
+		unitwarp gGID(getarg(0)),getarg(1),getarg(2),getarg(3);
+		return;
+	}
+	function	uUarpf	{
+		gGetxy;
+		unitwarp gGID(getarg(0)),.g_m$,.g_x+getarg(1),.g_y+getarg(2);
+		return;
+	}
+	function	eEffect	{
+		specialeffect getarg(1),AREA,nName(getarg(0));
+		return;
+	}
+	function	gGetxy	{
+		getmapxy(.g_m$,.g_x,.g_y,0,.d_name$);
+		return;
+	}
+	function	_s	{
+		sleep2 100*getarg(0);
+		return;
+	}
+	function	eEffects	{
+		eEffect(getarg(0),getarg(1));
+		_s(getarg(2));
+		return;
+	}
+}
+-	script	Fire_Work_GODD#UN	-1,{
+	function	nName	;
+	function	gGID	;
+OnTimer1000:
+	for(.@i=14;.@i<=21;.@i++)
+		getmapxy(.@n_m$,.@n_x[.@i],.@n_y[.@i],1,nName(.@i));
+	setarray .@n_t[1],15,16,17,18,19,20,21,14;
+	for(.@k=1;.@k<=3;.@k++)
+	{
+		for(.@t=1;.@t<=8;.@t++)
+		{
+			for(;;)
+			{
+				getmapxy(.@n_m$,.@n_xs,.@n_ys,1,nName(14));
+				if( .@n_xs == .@n_x[.@n_t[.@t]] && .@n_ys == .@n_y[.@n_t[.@t]] )
+					break;
+				for(.@g=14;.@g<=21;.@g++)
+				{
+					.@bjh=.@g+.@t;
+					.@bjh=.@bjh>21?.@bjh-22+14:.@bjh;
+					unitwalk gGID(.@g),.@n_x[.@bjh],.@n_y[.@bjh];
+				}
+				sleep2 1;
+			}
+		}
+		sleep2 1;
+	}
+	end;
+	function	nName	{
+		return "#FW_effect"+getarg(0);
+	}
+	function	gGID	{
+		return getnpcid(0,nName(getarg(0)));
+	}
+}
+guild_room,0,0,0	script	#FW_effect1	1002,{}
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect2	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect3	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect4	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect5	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect6	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect7	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect8	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect9	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect10	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect11	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect12	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect13	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect14	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect15	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect16	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect17	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect18	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect19	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect20	1002
+guild_room,0,0,0	duplicate(#FW_effect1)	#FW_effect21	1002

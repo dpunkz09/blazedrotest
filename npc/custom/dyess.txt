@@ -1,0 +1,908 @@
+// Contes de Talendal http://www.dokebi-online.com/
+//===== Script eAthena ===================================================================================================
+//= Styliste Custom
+//===== Par: =============================================================================================================
+//      					        __					
+//		   				     /\ \ \___   /\  /\                       
+//		  				    /  \/ / _ \ / /_/ /                       
+//	  	  				   / /\  / (_) / __  /                        
+//	  	  				   \_\ \/ \___/\/ /_/                         
+//	  
+// Traduction : AeriePinkPanther						
+//===== Version Actuelle: ================================================================================================
+//= 7.4
+//===== Compatible avec: =================================================================================================
+//= eAthena / Ymir
+//===== Description: =====================================================================================================
+//
+//= 7.4  - Ajout d'une option dans les conf permettant de blacklister des palettes ou des coupes.
+//		 - Les coupes / palettes commencent désormais à 1 et non à 0 (compatibilité avec les nouveaux clients).
+//= 7.3  - Corrections mineures.
+//= 7.2  - Correction d'un bug avec les coupes avec une couleur de peau différente (merci à Danifae).
+//= 7.1  - Correction d'un bug avec le défilé des palettes (merci à Danifae).
+//= 7.0  - Réécriture complète du script
+//= v6.4 - Correction de quelques petites fautes de frappe
+//	    - Ajout de la possibilité de voir les palettes suivantes ou précédentes après avoir soi-même choisi un numéro.
+//	    - Ajout d'un menu pour partager ses templates
+//= v6.3 - Correction d'un bug avec la lecture des templates (merci à Morrigan)
+//= v6.2 - Ajout d'un menu permettant de visualiser les palettes actives
+//= v6.1 - Correction d'une typo
+//= v6.0 - Optimisation du code
+//	    - Correction de l'affichage du viewid pour les tests de hats
+//	    - Ajout d'une option pour limiter les palettes/coupes en fonction du sexe
+//	    - Ajout d'une option pour limiter les palettes/coupes en fonction du job
+//	    - Suppression de plein de variables inutiles
+//	    - Ajout d'une fonction "look aléatoire"
+//= v5.2 - Correction d'un bug avec l'affichage d'une variable
+//= v5.2 - Remplacement des constantes par des variables pour le nombre de coupes/palettes
+//       - Ajout des options "Précédent" et "Retour au début" dans les menus
+//       - Remaniement complet des menus pour permettre plusieurs actions sans devoir reparler au NPC
+//       - Ajout d'une option de sauvegarde pour les templates, basée par compte
+//       - Ajout d'un menu GM pour gérer les fonctionnalités optionnelles
+//       - Option: permettre un changement d'apparence (job et headgear)
+//
+//===== Commentaires: ====================================================================================================
+//
+// Libre à vous de le modifier comme vous le voulez, tant que  vous ne vous ne vous faites pas passer pour l'auteur de ce 
+// script ou que vous ne l'utilisez à des fins commerciales (et OUI les donations sont des fins commerciales).
+//
+// Merci aussi de ne pas redistribuer ce script sans m'avoir contacté au préalable.
+//
+// Un pack de palettes custom avec plusieurs couleurs de peau peut être téléchargé ici: 
+// http://ymir-ro.tk/dl/dye.rar
+//
+// N'oubliez pas de modifier la partie configuration tout en bas du fichier avant de l'utiliser!
+//
+//========================================================================================================================
+
+prt_in,135,34,2	script	Arman (Stylist)::Stylistecustom	122,{
+
+if ( .cleangarbage && #palsaveCount )
+	callsub S_cleanit;
+if ( getlook(0)<50 || ( getlook(0)>4000 && getlook(0)<4500 ) ) set @class,getlook(0); // Pour éviter des problèmes avec les persos en disguise
+else if (classlookoption) set @class,classlookoption; // Du gros custom pour mon serveur - je laisse quand même vu que ça ne fait pas de mal non plus
+else set @class,class;
+set .@i,1;
+do {
+	if (getd(".maxPalettesCus"+.@i+sex+"-"+@class)) 
+		set getd("@maxPalettesCus"+.@i+sex),getd(".maxPalettesCus"+.@i+sex+"-"+@class);
+	else
+		set getd("@maxPalettesCus"+.@i+sex),getd(".maxPalettesCus"+.@i+sex);
+	set .@i,.@i+1;
+	} while ( .@i <= 3 );
+if ( getd("@maxPalettesCus1"+sex) == 9999 && getd("@maxPalettesCus2"+sex) == 9999 && getd("@maxPalettesCus3"+sex) == 9999 && getgmlevel()<.GMconf && !.optionJob ) {
+	mes "^BF0073[Stylist]^000000";
+	mes "Oh ! I'm sorry I can't do anything for you! I don't really work on those strange clothes.";
+	close;
+	}
+mes "^BF0073[Stylist]^000000";
+mes "But look at this! How do you have to tangle your hair like that? It was really time for you to come see me!";
+next;
+mes "^BF0073[Stylist]^000000";
+mes "And these clothes! I'm sorry, but someone had to tell you: you really ugly taste!";
+next;
+mes "^BF0073[Stylist]^000000";
+mes "Ah la la! Let's see what I can do for you ! You're lucky to mette me, that's all I can tell you! I've been hairdresser of Alexsaï II, the grand tsar of Moscovia. Yes, "+( sex ? "mister" : "m'dame" )+"!";
+L_MainMenu:
+while(1) {
+	next;
+	if (getarraysize(.bronzage$)) set .@bron$,"Change skin colour.";
+	if (.optionJob==1) set .@JOBdialog2$,"Try clothes of an other job.";
+	if (getgmlevel()>=.GMconf) set .@GMdialog$,"GM Menu.";
+	if ( getd("@maxPalettesCus1"+sex) != 9999 ) set .@ji1$,"Change hairstyle.";
+	if ( getd("@maxPalettesCus2"+sex) != 9999 ) set .@ji2$,"Change hairstyle colour.";
+	if ( getd("@maxPalettesCus3"+sex) != 9999 ) set .@ji3$,"Dye clothes.";
+	if ( getd("@maxPalettesCus1"+sex) != 9999 && getd("@maxPalettesCus2"+sex) != 9999 && getd("@maxPalettesCus3"+sex) != 9999 ) {
+		set .@ji4$,"Manage saved palettes.";
+		set .@ji5$,"Random Look.";
+		set .@ji6$,"See the shared palettes.";
+		}
+	switch(select(.@ji1$,.@ji2$,.@ji3$,.@bron$,.@JOBdialog2$,.@ji4$,.@ji6$,.@ji5$,"View current palettes.",.@GMdialog$,"Leave discussion.")) {
+	case 1: // Coupe
+		callsub S_change,1;
+		break;
+
+	case 2: // Couleur des cheveux
+		callsub S_change,2;
+		break;
+
+	case 3: // Couleur des Vêtements
+		callsub S_change,3;
+		break;
+
+	case 4: // Couleur de peau
+		mes "^BF0073[Stylist]^000000";
+		mes "Ah! Would you get more sunny ? Or maybe you wanna stay in shadows? Tell me, what skin would you be?";
+		set @menu,1;
+		set .@i,0;
+		while (@menu==1) {
+			if (.@i) {
+				mes "^BF0073[Styliste]^000000";
+				mes "Well, What skin do you want to get ?";
+				}
+			next;
+			select(.bronzage$[0],.bronzage$[1],.bronzage$[2],.bronzage$[3],.bronzage$[4],.bronzage$[5],.bronzage$[6],.bronzage$[7],.bronzage$[8],.bronzage$[9],.bronzage$[10]);
+			set @menu,@menu-1;
+			setlook 6,( getlook(6)%.bonzlimit ) + ( @menu*.bonzlimit );
+			setlook 7,( getlook(7)%.bonzlimit ) + ( @menu*.bonzlimit );
+			set bronzage,@menu;
+			mes "^BF0073[Stylist]^000000";
+			mes "That's it! Does your new tan suit you!";
+			next;
+			select("Try another skin.","It suits me!");
+			set .@i,1;
+			}
+		mes "^BF0073[Stylist]^000000";
+		mes "Good choice! You look great!";
+		break;
+
+	case 5: // Autre profession
+		while(1) {
+			mes "^BF0073[Stylist]^000000";
+			mes "What job would you try the clothes?";
+			next;
+			switch(select("Classical Jobs","Advanced Jobs","Babies Jobs","Enter Job ID","Previous")) {
+			case 1:
+				menu "Novice",-,"Swordman",-,"Magician",-,"Archer",-,"Acolyte",-,"Merchant",-,"Thief",-,"Knight",-,"Priest",-,"Sorcerer",-,"Blacksmith",-,"Hunter",-,"Assassin",-,"Knight (Peco)",-,"Crusader",-,"Monk",-,"Sage",-,"Rogue",-,"Alchimist",-,"Bard",-,"Dancer",-,"Crusader (Péco)",-,"Wedding",-,"Super Novice",-,"Gunslinger",-,"Ninja",-,"Santa",-,"Summer Suit",-,"Taekwon",-,"Star Gladiator",-,"Soul Linker",-,"Top Menu",L_MainMenu;
+				if (!.optionJob) close; // Pour éviter que les joueurs puissent encore changer de profession après que "l'event" soit terminé si ils ont laissé le menu ouvert
+				if (@menu==29) set @menu, 4047;
+				if (@menu==30) set @menu, 4048;
+				if (@menu==31) set @menu, 4050;
+				setlook 0,@menu-1;
+				break;
+			case 2:
+				menu "High Novice",-,"High Swordman",-,"High Magician",-,"High Archer",-,"High Acolyte",-,"High Merchant",-,"High Thief",-,"Lord Knight",-,"High Priest",-,"High Sorcerer",-,"Maître Forgeron",-,"Sniper",-,"Assassin Cross",-,"Lord Knight (Peco)",-,"Paladin",-,"Champion",-,"Professor",-,"Stalker",-,"Biochimist",-,"Clown",-,"Gypsy",-,"Paladin (Péco)",-,"Top menu",L_MainMenu;
+				if (!.optionJob) close;
+				setlook 0,@menu+4000;
+				break;
+			case 3:
+				menu "Baby",-,"Palefrenier",-,"Enfant Prodige",-,"Petit Archer",-,"Enfant de Choeur",-,"Vendeur de Rue",-,"Enfant des Rues",-,"Ecuyer",-,"Sacristain",-,"Prestidigitateur",-,"Compagnon",-,"Rabatteur",-,"Petite Frappe",-,"Ecuyer (Péco)",-,"Page",-,"Bedeau",-,"Petit Génie",-,"Déliquant Juvénile",-,"Petit Chimiste",-,"Enfant de la Balle",-,"Ballerine",-,"Page (Péco)",-,"Super Bébé",-,"Top menu",L_MainMenu;
+				if (!.optionJob) close;
+				setlook 0,@menu+4022;
+				break;
+			case 4:
+				mes "So you've mastered the secret of the mysterious arcane known as \"ID\". Well, which one would you use?";
+				input .@input;
+				setlook 0,.@input;
+				break;
+			case 5:
+				goto L_MainMenu;
+			}
+			mes "^BF0073[Stylist]^000000";
+			mes "Is that okay or do you want to try other clothes?";
+			next;
+			if ( select("Try other clothes.","Top Menu.") == 1 )
+				continue;
+			else  {
+				mes "^BF0073[Stylist]^000000";
+				mes "What can I do for you ?";
+				break;
+				}
+			}
+		continue;
+
+
+	case 6: // Gérer les palettes sauvegardées
+		mes "^BF0073[Stylist]^000000";
+		mes "If you want, I can memorize your current style, so you can find it easier the next time you come back with that character or another.";
+		next;
+		mes "^BF0073[Stylist]^000000";
+		mes "What do you want to do ?";
+		next;
+		switch(select("Read a template.","Register a template.","Erase a template.","Erase all templates","Cancel.")) {
+		case 1:
+
+			if ( !#palsave11 && !#palsave12 && !#palsave13 && !#palsave14 && !#palsave15 && !#palsave16 && !#palsave17 && !#palsave18 && !#palsave19 && !#palsave110 ) {
+				mes "^BF0073[Stylist]^000000";
+				mes "Sorry but you have no saved palette.";
+				break;
+				}
+			if ( #palsave11 && #palsave12 && #palsave13 && #palsave14 && #palsave15 && #palsave16 && #palsave17 && #palsave18 && #palsave19 && #palsave110 ) {
+				mes "^BF0073[Stylist]^000000";
+				mes "Sorry but you can not record more than 10 templates. Do you want to erase one ?";
+				next;
+				if ( select("Erase a template","Cancel") == 1 ) goto L_effacer;
+				break;
+				}
+			mes "^BF0073[Stylist]^000000";
+			mes "How do you apply template?";
+			next;
+			menu #palsaveName1$,-,#palsaveName2$,-,#palsaveName3$,-,#palsaveName4$,-,#palsaveName5$,-,#palsaveName6$,-,#palsaveName7$,-,#palsaveName8$,-,#palsaveName9$,-,#palsaveName10$,-;
+			mes "^BF0073[Stylist]^000000";
+			mes "done !";
+			setlook 1,(getd("#palsave1"+@menu)-1000000000)%1000000%1000;
+			setlook 6,(((getd("#palsave1"+@menu)-1000000000)/1000)%1000)+(.bonzlimit*bronzage);
+			setlook 7,((getd("#palsave1"+@menu)-1000000000)/1000000)+(.bonzlimit*bronzage);
+			break;
+
+		case 2:
+			callsub S_Safelook;
+			mes "^BF0073[Stylist]^000000";
+			mes "What name would you give to this template?";
+			next;
+			input .@temp$;
+			set .@i,0;
+			do {
+				set .@i,.@i+1;
+				if (getd("#palsaveName"+.@i+"$") == "") {
+					set getd("#palsaveName"+.@i+"$"),.@temp$;
+					set getd("#palsave1"+.@i),1000000000+(@safelook7*1000000)+(@safelook6*1000)+getlook(1);
+					mes "^BF0073[Styliste]^000000";
+					mes "Well, it's done!";
+					break;
+					}
+				} while (.@<10);
+			break;
+
+		case 3:
+L_effacer:
+			mes "^BF0073[Stylist]^000000";
+			mes "Which template do you want to erase ?";
+			next;
+			select(#palsaveName1$,#palsaveName2$,#palsaveName3$,#palsaveName4$,#palsaveName5$,#palsaveName6$,#palsaveName7$,#palsaveName8$,#palsaveName9$,#palsaveName10$);
+			set getd("#palsaveName"+@menu+"$"),"";
+			set getd("#palsave1"+@menu),0;
+			mes "^BF0073[Stylist]^000000";
+			mes "All data have been erased!";
+			break;
+
+		case 4:
+			mes "^BF0073[Stylist]^000000";
+			mes "Are you really sure to do this?!";
+			next;
+			menu "Yes.",-,"Cancel.",LCancel;
+			do {
+				set .@ie, .@ie+1;
+				set getd("#palsaveName"+.@ie+"$"),"";
+				set getd("#palsave1"+.@ie),0;
+				} while (.@ie < 10);		
+			mes "^BF0073[Stylist]^000000";
+			mes "That's it. All templates have been erased.";
+			break;
+
+		case 5:
+			mes "^BF0073[Stylist]^000000";
+			mes "Well, as you wish.";
+			break;
+			}
+		break;
+
+
+
+
+	case 7: // Palettes partagées
+		callsub S_Safelook;
+		switch(select("Share current style","See shared styles","Cancel")) {
+		case 1:
+			mes "^BF0073[Stylist]^000000";
+			mes "If you want, I can add you to my current style catalog for other adventurers to enjoy. If you do not want everyone using it, I can also add it to my catalog private: only those who have the correct password can then use it. What say you?";
+			next;
+			switch(select("Add style to the catalog","Add style to private catalog","Cancel")) {
+			case 2: // Ne pas le descendre: il n'y a pas de break et le script continue sur case 1.
+				mes "^BF0073[Stylist]^000000";
+				mes "Alright, what password do you want use ?";
+				next;
+				input .@tn2$;
+				while (getstrlen(.@tn$)>10) {
+					mes "^BF0073[Stylist]^000000";
+					mes "Oh I'm sorry but that name is too long. It should be 10 characters or less. Would you choose a different one?";						next;
+					input .@tn2$;
+					}
+			case 1:
+				mes "^BF0073[Stylist]^000000";
+				mes "Well, what name do you to give to your style?";
+				next;
+				input .@tn$;
+				while (getstrlen(.@tn$)>10) {
+					mes "^BF0073[Stylist]^000000";
+					mes "Oh I'm sorry but that name is too long. It should be 10 characters or less. Would you choose a different one?";						next;
+					input .@tn$;
+					}
+				if (getd(.partageP$+"sauvCount")>=119) {
+					mes "^BF0073[Stylist]^000000";
+					mes "Oh my, I have more room in my catalog! Hmm, this is not so bad, I will replace an old style with your own.";		
+					next;
+					set getd(.partageP$+"sauvCount"),0;
+					}
+				else if (getd(.partageP$+"palsave["+getd(.partageP$+"sauvCount")+"]")) set getd(.partageP$+"sauvCount"),getd(.partageP$+"sauvCount")+1; // Je mets ce if pour ne pas que ça déconne avec la première template (0)
+				set getd(.partageP$+"palsavePass$["+getd(.partageP$+"sauvCount")+"]"),.@tn2$;
+				if (getd(.partageP$+"palsavePass$["+getd(.partageP$+"sauvCount")+"]")=="") set getd(.partageP$+"palsaveName$["+getd(.partageP$+"sauvCount")+"]"),"^BF0073"+strcharinfo(0)+"^000000 - "+.@tn$;
+				else set getd(.partageP$+"palsaveName$["+getd(.partageP$+"sauvCount")+"]"),"^BF0073"+strcharinfo(0)+"^000000 - ^FF0000"+.@tn$+"^000000";
+				set getd(.partageP$+"palsave["+getd(.partageP$+"sauvCount")+"]"),1000000000+(@safelook7*1000000)+(@safelook6*1000)+getlook(1);
+				mes "^BF0073[Stylist]^000000";
+				mes "And now, I just add your style to the catalog!";
+				break;	
+
+
+			case 3:
+				mes "^BF0073[Stylist]^000000";
+				mes "As you wish.";		
+				break;
+				}
+			break;
+
+		case 2:
+L_part2:
+			mes "^BF0073[Stylist]^000000";
+			mes "Very well. What style would you try?";
+			next;
+			set .@x,0;
+L_gdhfjgjgjgds:
+			if ( .@x < 110 && .@x/10 < getd(.partageP$+"sauvCount")/10 ) set .@y$,"Next";
+			else set .@y$,"";
+			menu getd(.partageP$+"palsaveName$["+.@x+"]"),-,getd(.partageP$+"palsaveName$["+.@x+1+"]"),-,getd(.partageP$+"palsaveName$["+.@x+2+"]"),-,getd(.partageP$+"palsaveName$["+.@x+3+"]"),-,getd(.partageP$+"palsaveName$["+.@x+4+"]"),-,getd(.partageP$+"palsaveName$["+.@x+5+"]"),-,getd(.partageP$+"palsaveName$["+.@x+6+"]"),-,getd(.partageP$+"palsaveName$["+.@x+7+"]"),-,getd(.partageP$+"palsaveName$["+.@x+8+"]"),-,getd(.partageP$+"palsaveName$["+.@x+9+"]"),-,.@y$,L_2palseuiv;
+			set .@y,.@x+@menu-1;
+			if (getd(.partageP$+"palsavePass$["+.@y+"]")!="") {
+				mes "^BF0073[Stylist]^000000";
+				mes "I need a password to use this style. Do you know it?";
+				next;
+				input .@x$;
+				if (.@x$!=getd(.partageP$+"palsavePass$["+.@y+"]")) {
+					mes "^BF0073[Stylist]^000000";
+					mes "I'm sorry but the password doesn't match. Would you try a different style?";
+					next;
+					set .@x,0;
+					goto L_gdhfjgjgjgds;
+					}
+				}
+			mes "^BF0073[Stylist]^000000";
+			mes "So what did you think about this one?";
+			setlook 1,(getd(.partageP$+"palsave["+.@y+"]")-1000000000)%1000000%1000;
+			setlook 6,(((getd(.partageP$+"palsave["+.@y+"]")-1000000000)/1000)%1000)+(.bonzlimit*bronzage);
+			setlook 7,((getd(.partageP$+"palsave["+.@y+"]")-1000000000)/1000000)+(.bonzlimit*bronzage);
+			next;
+			menu "Keep this style",-,"Try another style",L_part2;
+			break;
+
+		case 3:
+			mes "^BF0073[Stylist]^000000";
+			mes "As you wish.";		
+			break;
+			}
+		break;
+
+
+	case 8: // Look aléatoire
+		while(1) {
+			set .@look1,rand(1,getd("@maxPalettesCus1"+sex));
+			while ( callsub(S_CheckBlackList,.@look1,1) ) {
+				set .@look1,rand(1,getd("@maxPalettesCus1"+sex));
+				}
+			set .@look2,rand(1,getd("@maxPalettesCus2"+sex));
+			while ( callsub(S_CheckBlackList,.@look2,2) ) {
+				set .@look2,rand(1,getd("@maxPalettesCus2"+sex));
+				}
+			set .@look3,rand(1,getd("@maxPalettesCus3"+sex));
+			while ( callsub(S_CheckBlackList,.@look3,3) ) {
+				set .@look3,rand(1,getd("@maxPalettesCus3"+sex));
+				}
+			setlook 1,.@look1;
+			setlook 6,.@look2+(.bonzlimit*bronzage);
+			setlook 7,.@look3+(.bonzlimit*bronzage);
+			mes "^BF0073[Stylist]^000000";
+			mes "What did you think about that ?";
+			mes "Hairstyle n° ^a5228e"+.@look1+"^000000";
+			mes "Hairstyle color n°^a5228e"+.@look2+"^000000";
+			mes "Clothes color n°^a5228e"+.@look3+"^000000";
+			next;
+			if( select ("Another random look","i really appreciate!") == 1 )
+				continue;
+			else
+				break;
+			}
+
+	case 9: // Mes palettes
+		callsub S_Safelook;
+		mes "^BF0073[Stylist]^000000";
+		mes "You use those palettes :";
+		mes "Hairstyle n° ^a5228e"+getlook(1)+"^000000";
+		mes "Hairstyle color n° ^a5228e"+@safelook6+"^000000";
+		mes "Clothes color n° ^a5228e"+@safelook7+"^000000";
+		break;
+
+	case 10: // Menu GM
+		switch (select("Allow job change.","Explore viewIDs (Becarefull with Gravity Errors!)","Enter a viewID")) {
+		case 1:
+			mes "^BF0073[Stylist]^000000";
+			mes "How long (in minutes)?";
+			input .tempTimer;
+			next;
+			mes "^BF0073[Stylist]^000000";
+			mes "Done! For "+.tempTimer+" minute"+ ( .tempTimer > 1 ? "s" : "" ) +", players can change the appearance of their jobs and their hats.";
+			close2;
+			awake strnpcinfo(3);
+			set .optionJob,1;
+			sleep .tempTimer*60000;
+			set .optionJob,0;
+			break;;
+
+		case 2:
+			set .@hatview,1;
+			setlook 4,.@hatview;
+			mes "View ID "+.@hatview;
+			while (1) {
+				if ( select("Next",( .@hatview ? "Previous" : "" ) ) == 1 ) {
+					set .@hatview,.@hatview+1;
+					setlook 4,.@hatview;
+					mes "View ID n° ^a5228e"+.@hatview+"^000000";
+					}
+				else {
+					if (!.@hatview) goto L_hatsuiv;
+					set .@hatview,.@hatview-1;
+					setlook 4,.@hatview;
+					mes "View ID n° ^a5228e"+.@hatview+"^000000";
+					}
+				}
+		case 3:
+			mes "^BF0073[Stylist]^000000";
+			mes "What viewID would you want see ? 0 for cancel.";
+			next;
+			while(1) {
+				input .@hatview;
+				if (!.@hatview) break;
+				setlook 4,.@hatview;
+				mes "View ID n° ^a5228e"+.@hatview+"^000000";
+				}
+			}
+		break;
+
+	case 11: // Annuler
+		mes "^BF0073[Stylist]^000000";
+		mes "As you wish... See you soon, I hope !";
+		close;
+
+
+	default: // J'aurais mal compté?
+		mes "^BF0073[Stylist]^000000";
+		mes "Hum... That seems we got a bug there.";
+		close;
+
+		}
+L_Main:
+	next;
+	mes "^BF0073[Stylist]^000000";
+	mes "Can I do somrething else for you?";
+	}
+close; // Pas besoin a priori vu qu'on n'arrive jamais ici mais on ne sait jamais
+
+
+S_Safelook:
+	set @safelook6,getlook(6)%.bonzlimit;
+	set @safelook7,getlook(7)%.bonzlimit;
+	return;
+
+
+S_change:
+mes "^BF0073[Stylist]^000000";
+mes "So let's see... Have you an idea of what you want or do you want to see what I can offer you?";
+next;
+if( getarg(0) == 1 ) {
+	set @dial1$,"Hairstyle";
+	set @dial2$,"hairstyle";
+	set @num1,1;
+	}
+else if( getarg(0) == 2 ) {
+	set @dial1$,"Color";
+	set @dial2$,"color";
+	set @num1,6;
+	}
+else {
+	set @dial1$,"Palette";
+	set @dial2$,"palette";
+	set @num1,7;
+	}
+set @num2,getarg(0);
+if ( select("Show me...","I know what I want !") == 1 ){
+	set @look, 0;
+	set @tl,0;
+L_Palbrowemain:
+	mes "^BF0073[Stylist]^000000";
+	mes "Fine, let's go! Stop me when you see something enjoying you!";
+	next;
+	while (1) {
+		if ( !@tl ) {
+			set @look,@look+1;
+			while ( callsub(S_CheckBlackList,@look,@num2) ) {
+				set @look,@look+1;
+				}
+			setlook @num1,( @num1 == 1 ? @look : @look+(.bonzlimit*bronzage) );
+			mes @dial1$+" numéro^a5228e "+@look+" ^000000!"; 
+			if(@look == getd("@maxPalettesCus"+@num2+sex)) {
+				next;
+				mes "^BF0073[Stylist]^000000";
+				mes "It was the last. We'll go back.";		
+				next;
+				callsub S_BrowseMenu,1,getarg(0);
+				}
+			else callsub S_BrowseMenu,2,getarg(0);
+			}
+		else {
+			set @look,@look-1;
+			while ( callsub(S_CheckBlackList,@look,@num2) ) {
+				set @look,@look-1;
+				}
+			setlook @num1,( !@look ? 1+( @num1 == 1 ? 0 : .bonzlimit*bronzage ) : @look+( @num1 == 1 ? 0 : .bonzlimit*bronzage ) );
+			mes @dial1$+" numéro^a5228e "+@look+" ^000000!"; 
+			if( @look == 1 ) {
+				next;
+				mes "^BF0073[Stylist]^000000";
+				mes "it was the first "+@dial2$+". We'll start from here.";
+				next;
+				callsub S_BrowseMenu,3,getarg(0);
+				}
+			else callsub S_BrowseMenu,4,getarg(0);
+			}
+		}
+	}
+else {
+L_choisirc:
+	while(1) {
+		mes "^BF0073[Stylist]^000000";
+		mes "Fine. In this case choose"+@dial2$+" and I'll make it.";
+ 		next;
+		mes "^BF0073[Stylist]^000000";
+		mes "Choose a number "+@dial2$+" ^0000FF between 1 and "+getd("@maxPalettesCus"+@num2+sex)+"^000000. 0 is the "+@dial2$+" per default of your character.";
+ 		next;
+L_askinput:
+		input @sty;
+		if ( @sty > getd("@maxPalettesCus"+@num2+sex) || @sty < 1 || callsub(S_CheckBlackList,@sty,getarg(0)) ) {
+			mes "^BF0073[Stylist]^000000";
+			mes "Hoho! Looks like I did not like it in my catalog. Please choose another one please.";
+			next;
+	 		goto L_askinput;
+			}
+		setlook @num1,( !@sty ? 1+( @num1 == 1 ? 0 : .bonzlimit*bronzage ) : @sty+( @num1 == 1 ? 0 : .bonzlimit*bronzage ) );
+		next;
+		mes "^BF0073[Stylist]^000000";
+		mes "No that bad. Is it good for you or did you need something else?";
+		next;
+		if ( @sty < getd("@maxPalettesCus"+@num2+sex) ) set @d1$,@dial1$+" next.";
+		else set @d1$,"";
+		if ( @sty > 0 ) set @d2$,@dial1$+" previous.";
+		else set @d2$,"";
+		switch(select( "No, it's perfect!","Something else please.",@d1$,@d2$,"I would see all "+@dial2$+"s.")) {
+		case 1:
+			mes "^BF0073[Stylist]^000000";
+			mes "Yesh, not bad. In fact it is not bad at all!";
+			goto L_Main;
+		case 2:
+			break;
+		case 3:
+			set @look, @sty;
+			set @tl,0;
+			goto L_Palbrowemain;
+		case 4:
+			set @look, @sty;
+			set @tl,1;
+			goto L_Palbrowemain;
+		case 5:
+			set @look, 0;
+			set @tl,0;
+			goto L_Palbrowemain;
+			}
+		}
+	}
+return;
+
+
+S_BrowseMenu:
+if( getarg(0) == 1 ) select("Previous.","I like this one.","Back to top.","Choose a "+@dial2$+".");
+else if( getarg(0) == 2 ) select("Continue.","Previous.","I like this one.","Back to top.","Choose a "+@dial2$+".");
+else if( getarg(0) == 3 ) select("Continue.","I like this one.","Choose a "+@dial2$+".");
+else select("Previous.","Continue.","I like this one.","Back on top.","Choose a "+@dial2$+".");
+
+if ( ( ( getarg(0) == 1 || getarg(0) == 4 ) && @menu == 1 ) || ( getarg(0) == 2 && @menu == 2 ) ) set @tl,1;
+else if ( ( getarg(0) == 1 && @menu == 3 ) || ( ( getarg(0) == 2 || getarg(0) == 4 ) && @menu == 4 ) ) { 
+	set @tl,0;
+	set @look, -1;
+	}
+else if ( ( ( getarg(0) == 2 || getarg(0) == 3 ) && @menu == 1 ) || ( getarg(0) == 4 && @menu == 2 ) ) set @tl,0;
+else if ( ( ( getarg(0) == 1 || getarg(0) == 3 ) && @menu == 2 ) || ( ( getarg(0) == 2 ||  getarg(0) == 4 ) && @menu == 3 ) ) { 
+	next;
+	mes "^BF0073[Styliste]^000000";
+	mes "Well now, you look like finally at something!";
+	mes "You're very cute by the way!";
+	goto L_Main;
+	}
+else if ( ( getarg(0) == 1 && @menu == 4 ) || ( ( getarg(0) == 2 || getarg(0) == 4 ) && @menu == 5 ) || ( getarg(0) == 3 && @menu == 3 ) ) { 
+	next;
+	goto L_choisirc;
+	}
+return;
+
+
+S_cleanit:
+do {
+	set .@i, .@i+1;
+	set getd("#palsaveName"+"("+.@i+")"+"0"+getcharid(3)+"$"),"";
+	set getd("#palsave1"+.@i+"0"+getcharid(3)),0;
+	set getd("#palsave2"+.@i+"0"+getcharid(3)),0;
+	set getd("#palsave3"+.@i+"0"+getcharid(3)),0;
+	} while (.@i<=10);
+set #palsaveCount,0;
+return;
+
+S_CheckBlackList:
+// Arguments: numéro de la palette, type
+
+	if ( getarg(1) == 1 )
+		set .@i$,".h";
+	else if ( getarg(1) == 2 )
+		set .@i$,".c";
+	else
+		set .@i$,".v";
+		
+//	debugmes .@i$+getarg(0)+ " - " +getd(.@i$+getarg(0));
+	if (getd(.@i$+getarg(0)))
+		return 1; // Blacklistée
+	else
+		return 0;
+
+
+L_2palseuiv:
+set .@x,.@x+10;
+goto L_gdhfjgjgjgds;
+
+OnInit:
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// Configuration /////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+set .GMconf,80; /////////////// Limit GM level for uqse the GM menu
+set .cleangarbage,0; ////////// Put 1 for clean variables (If you're using a previous version of this script)
+set .maxPalettesCus11,43; ///// Max Hair Styles (M) - maximum 999 hairstyles      (M=men , F=womens)
+set .maxPalettesCus10,43; ///// Max Hair Styles (F)
+set .maxPalettesCus21,251; //// Max Hair Colors (M) - maximum 999 palettes
+set .maxPalettesCus20,251; //// Max Hair Colors (F)
+set .maxPalettesCus31,303; //// Max Clothing (M) - maximum 999 palettes
+set .maxPalettesCus30,303; //// Max Clothing (F)
+set .optionJob,0; ///////////// Allow job view per default (0=non, 1=oui)
+set .partageP$,"$"; /////////// How manage shared palettes ? "." = en tant que 
+/////////////////////////////// variables NPC: elles disparaitront donc à chaque reloadscript, "$" = en tant que variables
+/////////////////////////////// serveur permanentes: elles ne seront donc conservées après un reboot du serveur, mais ça rajoutera
+/////////////////////////////// une array de 120 valeurs dans le mapreg, au risque de l'encombrer un peu.
+
+///////// Pour limiter le nombre de coupes/palettes par classe, utiliser la template suivante:
+///////// set .maxPalettesCus1<sex>-<ID du job>,<max>;
+///////// Par exemple, pour limiter à 20 le nombre des coupes pour les femmes high novices:
+///////// set .maxPalettesCus10-4001,20; (".maxPalettesCus1", "0" pour le sexe, et "-4001" pour le job).
+///////// Passer le max à 9999 pour désactiver complètement le changement.
+
+// NB: Si le max spécifié est supérieur au nombre max de palettes pour toutes les classes, attendez-vous au pire...
+
+setarray .bronzage$[0],"White skin","Very white skin","Tanned Skin","Very tanned Skin","Black Skin"; // Utiliser les options de coloration de la 
+/////////////////////////////// peau des persos? "" pour désactiver, ou le nom de chacune des couleurs de peau. NB: Le script n'en gère pas plus de 10. 
+/////////////////////////////// Merci de me contacter si vous en avez besoin de plus.
+set .bonzlimit,1000; // Quel est l'écart entre les palettes des différentes couleurs de peau? Avec une valeur à 1000 et des palettes max à 300
+/////////////////////////////// par exemple, les palettes de la première couleur de peau iront de 1 à 300, celle de la deuxième de 1001 à 1300, puis de
+/////////////////////////////// 2001 à 2300, etc. Il faut bien sûr que cette valeur soit plus grande que le plus grand des .maxPalettesCus.
+
+// NB: N'oubliez pas modifier le nombre de palettes max en conséquence dans conf/battle/client.conf. Par exemple, si vous avec 303 palettes de vêtements
+// et que vous utilisez 5 couleurs de peau avec un écart de 1000 (valeurs par défaut), les palettes de la première couleur de peau iront de 1 à 303, celles
+// de la deuxième couleur de peau iront de 1001 à 1303, etc jusqu'à la 5ème couleur de peau qui ira de 4001 à 4303. Il faudra donc indiquer 4303 comme
+// valeur pour les vêtements dans conf/battle/client.conf. Même chose pour les couleurs de cheveux (4251 avec les valeurs par défaut et la grf de palettes
+// proposée avec ce script).
+
+// Black list
+
+// Vous pouvez désactiver certaines palettes de votre grf. Pour cela, utilisez tout simplement la syntaxe suivante:
+// "set .c<numéro de la palette>,1;" pour les couleurs de cheveux
+// "set .v<numéro de la palette>,1;" pour les couleurs de vêtements
+// "set .h<numéro de la coupe>,1;" pour les coupes de cheveux
+// Par exemple, "set .v51,1;" désactivera la palette de vêtements numéro 51.
+// Oui, c'est horrible, mais c'est je pense le plus facile à configurer pour les utimisateurs.
+
+// La (très longue) liste qui suit correspond à la grf de palettes distribuée avec ce script.
+// J'ai viré toutes les palettes trop flashy et surtout les palettes qui ne passent pas avec les nouvelles montures.
+// Si quelqu'un veut refaire la grf en virant ces palettes et en changeant le numéro de celles qui restent, il est le bienvenu.
+
+// NB: Ne blacklistez JAMAIS la première ou la dernière palette (le script n'est pas encore configué pour gérer ça).
+// Si vous tenez à virer la dernière palette, changez le nombre de palettes max à la place...
+
+set .v11,1;
+set .v12,1;
+set .v15,1;
+set .v32,1;
+set .v42,1;
+set .v43,1;
+set .v44,1;
+set .v47,1;
+set .v51,1;
+set .v52,1;
+set .v53,1;
+set .v56,1;
+set .v66,1;
+set .v68,1;
+set .v69,1;
+set .v79,1;
+set .v80,1;
+set .v81,1;
+set .v82,1;
+set .v83,1;
+set .v84,1;
+set .v85,1;
+set .v86,1;
+set .v87,1;
+set .v88,1;
+set .v89,1;
+set .v91,1;
+set .v92,1;
+set .v93,1;
+set .v94,1;
+set .v95,1;
+set .v96,1;
+set .v101,1;
+set .v102,1;
+set .v103,1;
+set .v104,1;
+set .v105,1;
+set .v106,1;
+set .v109,1;
+set .v113,1;
+set .v114,1;
+set .v115,1;
+set .v120,1;
+set .v121,1;
+set .v122,1;
+set .v123,1;
+set .v124,1;
+set .v125,1;
+set .v126,1;
+set .v127,1;
+set .v128,1;
+set .v129,1;
+set .v130,1;
+set .v131,1;
+set .v132,1;
+set .v133,1;
+set .v134,1;
+set .v140,1;
+set .v141,1;
+set .v142,1;
+set .v143,1;
+set .v145,1;
+set .v146,1;
+set .v147,1;
+set .v148,1;
+set .v150,1;
+set .v151,1;
+set .v152,1;
+set .v153,1;
+set .v154,1;
+set .v158,1;
+set .v159,1;
+set .v161,1;
+set .v162,1;
+set .v163,1;
+set .v164,1;
+set .v165,1;
+set .v166,1;
+set .v167,1;
+set .v168,1;
+set .v169,1;
+set .v170,1;
+set .v171,1;
+set .v172,1;
+set .v173,1;
+set .v175,1;
+set .v176,1;
+set .v184,1;
+set .v185,1;
+set .v186,1;
+set .v187,1;
+set .v188,1;
+set .v189,1;
+set .v191,1;
+set .v192,1;
+set .v193,1;
+set .v194,1;
+set .v195,1;
+set .v196,1;
+set .v197,1;
+set .v198,1;
+set .v199,1;
+set .v200,1;
+set .v201,1;
+set .v202,1;
+set .v203,1;
+set .v204,1;
+set .v206,1;
+set .v207,1;
+set .v208,1;
+set .v209,1;
+set .v215,1;
+set .v216,1;
+set .v217,1;
+set .v218,1;
+set .v219,1;
+set .v220,1;
+set .v221,1;
+set .v222,1;
+set .v223,1;
+set .v225,1;
+set .v226,1;
+set .v227,1;
+set .v228,1;
+set .v229,1;
+set .v230,1;
+set .v231,1;
+set .v232,1;
+set .v233,1;
+set .v234,1;
+set .v235,1;
+set .v236,1;
+set .v237,1;
+set .v238,1;
+set .v239,1;
+set .v242,1;
+set .v243,1;
+set .v244,1;
+set .v245,1;
+set .v246,1;
+set .v247,1;
+set .v248,1;
+set .v249,1;
+set .v250,1;
+set .v251,1;
+set .v252,1;
+set .v253,1;
+set .v254,1;
+set .v255,1;
+set .v256,1;
+set .v257,1;
+set .v258,1;
+set .v259,1;
+set .v260,1;
+set .v261,1;
+set .v262,1;
+set .v263,1;
+set .v264,1;
+set .v265,1;
+set .v267,1;
+set .v268,1;
+set .v269,1;
+set .v270,1;
+set .v271,1;
+set .v272,1;
+set .v273,1;
+set .v274,1;
+set .v275,1;
+set .v276,1;
+set .v277,1;
+set .v278,1;
+set .v279,1;
+set .v280,1;
+set .v281,1;
+set .v282,1;
+set .v283,1;
+set .v284,1;
+set .v285,1;
+set .v286,1;
+set .v287,1;
+set .v288,1;
+set .v289,1;
+set .v294,1;
+set .v295,1;
+set .v296,1;
+set .v297,1;
+set .v298,1;
+set .v299,1;
+set .v300,1;
+set .v302,1;
+set .v301,1;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Ne pas toucher en-dessous de cette ligne (je rajoute une sécurité au cas où l'admin merde avec la partie config). Les divisions par zéro, ça ne le fait pas...
+
+	set .@i,( .maxPalettesCus31 > .maxPalettesCus30 ? .maxPalettesCus31 : .maxPalettesCus30 );
+	set .@i,( .@i > .maxPalettesCus20 ? .@i : .maxPalettesCus20 );
+	set .@i,( .@i > .maxPalettesCus21 ? .@i : .maxPalettesCus21 );
+	if ( .bonzlimit <= .@i ) set .bonzlimit,.@i+1;
+	
+	end;
+
+}

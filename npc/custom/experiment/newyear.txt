@@ -1,0 +1,79 @@
+
+prontera,155,174,5	script	Santa Claus	718,{
+donpcevent strnpcinfo(0)+"::OnTrigger";
+end;
+
+OnInit:
+setarray $@coordinate_x,153,151,151,153,157,159,159,157;
+setarray $@coordinate_y,178,176,172,170,170,172,176,178;
+.size = getarraysize( $@coordinate_x );
+for( .@i = 0; .@i < .size; .@i++ ){
+	movenpc "Cookie#"+.@i,$@coordinate_x[.@i],$@coordinate_y[.@i];
+	setnpcdisplay( "Cookie#"+.@i,1246 );
+}
+
+sleep 1500;
+// end; // auto start
+
+OnTrigger:
+if( !.status ){
+	.status = 1;
+	initnpctimer;
+	
+	while( .status ){
+		specialeffect 96;
+		specialeffect 55;
+		sleep 500;
+		specialeffect EF_FIREPILLARBOMB;
+		sleep 750;
+		donpcevent "::OnEffect";
+		specialeffect EF_SPR_LIGHTPRINT;
+		
+		$@coordinate_x[.size] = $@coordinate_x[0];
+		$@coordinate_y[.size] = $@coordinate_y[0];
+		deletearray $@coordinate_x[0],1;
+		deletearray $@coordinate_y[0],1;
+		
+		donpcevent "::OnWalk";
+		sleep 1000;
+	}
+	
+}
+end;
+
+OnTimer15000:
+	// .status = 0;    // uncomment to cancel loop
+	npctalk "Ho~ho~ho~ Merry Christmas ~~";
+	initnpctimer;
+	end;
+	
+OnTimer1000:
+	soundeffectall "wewish.wav",0;
+	end;
+	
+}
+
+
+-	script	sprite_display	-1,{
+OnWalk:
+if( strnpcinfo(2) != "" ){
+	npcspeed 250;
+	.@value = atoi( strnpcinfo(2) );
+	npcwalkto $@coordinate_x[.@value],$@coordinate_y[.@value];
+}
+end;
+OnEffect:
+	specialeffect 686;
+	specialeffect 709;
+	end;
+}
+
+
+prontera,1,1,4	duplicate(sprite_display)	Cookie#0	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#1	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#2	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#3	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#4	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#5	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#6	111
+prontera,1,1,4	duplicate(sprite_display)	Cookie#7	111

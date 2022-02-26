@@ -1,0 +1,15 @@
+//-----------------------------------------
+// GRF Files
+// Add as many as needed.
+//-----------------------------------------
+//grf: C:\Program Files\Gravity\RO\rdata.grf
+//grf: C:\Program Files\Gravity\RO\data.grf
+
+//-----------------------------------------
+// Data Directory
+// Use the base folder, not the data\ path.
+//-----------------------------------------
+//data_dir: C:\Program Files\Gravity\RO\
+grf: E:\Installers\Games\IMPORTANT RO FILES\2013-08-07aRagexe_patched_Clean_with_data\MyPS-RO Client\blazedro.grf
+grf: E:\Installers\Games\IMPORTANT RO FILES\2013-08-07aRagexe_patched_Clean_with_data\MyPS-RO Client\data.grf
+data_dir: E:\Installers\Games\IMPORTANT RO FILES\2013-08-07aRagexe_patched_Clean_with_data\MyPS-RO Client

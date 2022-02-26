@@ -1,0 +1,664 @@
+//===== rAthena Script =======================================
+//= Queue System
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.0 
+//===== Compatible With: =====================================
+//= rAthena SVN r15340+
+//===== Description: =========================================
+//= A whisper-based queue system.
+//= Use with care! Improper usage may cause problems... :P
+//============================================================
+
+-	script	queue	-1,{
+function queue_create; function queue_destroy; function queue_cmd; function queue_check;
+
+OnInit:
+	// Room to hold parties/guilds: <map>,<x>,<y>
+	// There should NOT be any warp portals, etc. in the room.
+	setarray .WaitingRoom$[0], "pvp_c_room","54","65";
+
+	set .GMAccess,80;	// GM level required to handle queues
+	set .Cleaning,4;	// Automatically destroy old queues above this amount (0 to disable)
+
+	setarray .@Flags[0],0,1,2,3,14,15,18,22,33,34,41,42,45;
+	for(set .@i,0; .@i<getarraysize(.@Flags); set .@i,.@i+1)
+		setmapflag .WaitingRoom$[0], .@Flags[.@i];
+	setmapflag .WaitingRoom$[0], mf_nocommand, .GMAccess;
+	pvpoff .WaitingRoom$[0];
+	end;
+
+/*
+// Uncomment this section if you would like to automate queues.
+// Use caution, no warning messages will be given!
+OnMinute00:
+	switch(gettime(3)) {
+	// queue_create("<Name>",<Min>,<Max>,<0:solo | 1:party | 2:guild>,<Min>,<Max>,<Time in minutes>,"<map,x,y{|map,x,y{...}}>"{,"<Restrict|{...}>"});
+	// Add cases according to the hour you want the script to activate.  For more details on arguments, check the examples below. :3
+
+	// Will create an event at 08:00 open to 1~99 players (basically, everyone), warping them to prontera,136,204 after 10 minutes.
+		case 8: queue_create("Disguise Event",1,99,0,0,0,10,"prontera,136,204"); break;
+
+	// Will create an event at 22:00 open to 2 parties of size 5, starting immediately and warping to two separate locations. All players must be base level 90~99.
+		case 22: queue_create("Party vs Party",2,2,1,5,5,0,"guild_vs2,9,50|guild_vs2,92,50","blevel 90 99"); break;
+
+		default: break; }
+	end;
+*/
+
+OnWhisperGlobal:
+	if (@qd > gettimetick(2) && getgmlevel() < .GMAccess) {
+		dispbottom "You're whispering commands too quickly. Wait a few seconds!"; end; }
+	if (compare(@whispervar0$,"join")) {
+		if (!getarraysize(.Active$)) {
+			dispbottom "No queue is open at this time."; set @qd,gettimetick(2)+5; end; }
+		set .@Size, getarraysize(getd("$queue"+.Active$[0]+"$"))-2;
+		set .@Type$, ((atoi(.Active$[3]))?getcharid(atoi(.Active$[3])):strcharinfo(0));
+		for(set .@i,2; .@i<(.@Size+2); set .@i,.@i+1) {
+			if (.@Type$ == getd("$queue"+.Active$[0]+"$["+.@i+"]")) {
+				dispbottom "You are already in the queue."; set @qd,gettimetick(2)+5; end; } }
+		if (.@Size >= atoi(.Active$[2])) {
+			dispbottom "This queue is full."; set @qd,gettimetick(2)+5; end; }
+		set .@RIndex, atoi(.Active$[7])+8;
+		if (.Active$[.@RIndex] == "manual") {
+			dispbottom "This queue is not open to player registration."; set @qd,gettimetick(2)+5; end; }
+		if (atoi(.Active$[3])) {
+			if (!getcharid(atoi(.Active$[3]))) {
+				dispbottom "You aren't in a "+((atoi(.Active$[3])==1)?"party":"guild")+"."; set @qd,gettimetick(2)+5; end; }
+			set .@Leader$, ((atoi(.Active$[3])==1)?getpartyleader(atoi(.@Type$)):getguildmaster(atoi(.@Type$)));
+			if (strcharinfo(0) != .@Leader$) {
+				dispbottom "Only the "+((atoi(.Active$[3])==1)?"party":"guild")+" leader may register."; set @qd,gettimetick(2)+5; end; }
+			if (atoi(.Active$[3])==1) query_sql("SELECT `account_id` FROM `char` WHERE `party_id` = "+getcharid(1)+" AND `online` ="+1,.@List);
+			else query_sql("SELECT `account_id` FROM `char` WHERE `guild_id` = "+getcharid(2)+" AND `online` ="+1,.@List);
+			if ((atoi(.Active$[4]) && getarraysize(.@List) < atoi(.Active$[4])) || (atoi(.Active$[5]) && getarraysize(.@List) > atoi(.Active$[5]))) {
+				dispbottom "The "+((atoi(.Active$[3])==1)?"party":"guild")+" does not meet the required size of "+atoi(.Active$[4])+"~"+atoi(.Active$[5])+" members."; set @qd,gettimetick(2)+5; end; } }
+		for(set .@i,.@RIndex; .@i<.@RIndex+4; set .@i,.@i+1) {
+			if (.Active$[.@i] == "") break;
+			if (getarraysize(.@List)) {
+				for(set .@j,0; .@j<getarraysize(.@List); set .@j,.@j+1)
+					if (!queue_check(.@List[.@j],.Active$[.@i])) {
+						dispbottom ((.@List[.@j] == getcharid(3))?"You do":((atoi(.Active$[3])==1)?"Party":"Guild")+" member '"+rid2name(.@List[.@j])+"' does")+" not meet entry requirements."; set @qd,gettimetick(2)+5; end; }
+			} else if (!queue_check(getcharid(3),.Active$[.@i])) {
+				dispbottom "You do not meet entry requirements."; set @qd,gettimetick(2)+5; end; } }
+		setd "$queue"+.Active$[0]+"$["+(.@Size+2)+"]", .@Type$;
+		if (atoi(.Active$[3])) {
+			set .@Group, atoi(.@Type$);
+			set .@Type$, ((atoi(.Active$[3])==1)?getpartyname(.@Group):getguildname(.@Group)); }
+		queue_cmd("mes",atoi(.Active$[0]),.@Type$+" has joined the registration queue ("+(.@Size+1)+" total).");
+		if (!.Timer && .@Size+1 >= atoi(.Active$[1])) donpcevent "queue::OnQueue";
+		else if (.@Group) {
+			removemapflag .WaitingRoom$[0],33;
+			if (atoi(.Active$[3])==1) warpparty .WaitingRoom$[0], atoi(.WaitingRoom$[1]), atoi(.WaitingRoom$[2]), .@Group;
+			else warpguild .WaitingRoom$[0], atoi(.WaitingRoom$[1]), atoi(.WaitingRoom$[2]), .@Group;
+			setmapflag .WaitingRoom$[0],33; }
+		end;
+	}
+	else if (compare(@whispervar0$,"leave")) {
+		if (!getarraysize(.Active$))
+			dispbottom "There is no queue open at this time, and you may not leave a queue once initiated.";
+		else doevent "queue::OnPCLogoutEvent";
+		set @qd,gettimetick(2)+5; 
+		end;
+	}
+	if (getgmlevel() < .GMAccess) { dispbottom "Invalid input."; end; }
+	else if (compare(@whispervar0$,"start")) {
+		if (!getarraysize(.Active$)) {
+			dispbottom "No queue is open at this time."; end; }
+		if (select(" > ^0055FFStart current queue...^000000: > ^777777Cancel^000000")==2) close;
+		set .Timer,0;
+		set .Start,1;
+		donpcevent "queue::OnQueue";
+		dispbottom "Queue initiated.";
+		close;
+	}
+	else if (compare(@whispervar0$,"cancel")) {
+		if (!getarraysize(.Active$)) {
+			dispbottom "No queue is open at this time. Use 'destroy' instead."; end; }
+		set .@i, select(" > ^FF0000End current queue...^000000: > ^FF0000End current queue without destroying it...^000000: > ^777777Cancel^000000");
+		if (.@i==3) close;
+		set .@str$,"The '"+getd("$queue"+.Active$[0]+"$[0]")+"' queue has been cancelled.";
+		if (.Active$[atoi(.Active$[7])+8] == "manual") dispbottom .@str$;
+		else announce .@str$,0,0xD0D0D0;
+		if (.@i==1) queue_destroy(atoi(.Active$[0]));
+		if (atoi(.Active$[3])) maprespawnguildid .WaitingRoom$[0],0,3;
+		deletearray .Active$, getarraysize(.Active$);
+		awake "queue";
+		set .Timer,0;
+		close;
+	}
+	else if (compare(@whispervar0$,"create")) {
+		if (getarraysize(.Active$)) {
+			dispbottom "A queue is already active."; end; }
+		for(set .@i,1; .@i<6; set .@i,.@i+1) {
+			if (getd("@whispervar"+.@i+"$") == "") {
+				dispbottom "Invalid syntax. Whisper 'help2' for details."; end; }
+			if (charat(getd("@whispervar"+.@i+"$"),0)==" ") setd "@whispervar"+.@i+"$", delchar(getd("@whispervar"+.@i+"$"),0);
+			if (charat(getd("@whispervar"+.@i+"$"),getstrlen(getd("@whispervar"+.@i+"$"))-1)==" ") setd "@whispervar"+.@i+"$", delchar(getd("@whispervar"+.@i+"$"),getstrlen(getd("@whispervar"+.@i+"$"))-1); }
+		explode(.@Entries$,@whispervar2$,"~");
+		if (atoi(.@Entries$[1]) < atoi(.@Entries$[0]) || countstr(@whispervar2$,"~") != 1 || atoi(.@Entries$[1]) > 125) {
+			message strcharinfo(0),"Invalid 'min~max' input."; end; }
+		setarray .@TypeDisp$[0],"solo","party","guild";
+		if (compare(@whispervar3$,"solo")) setarray .@Type[0],0,0,0;
+		else {
+			explode(.@t$,@whispervar3$," ");
+			if (getarraysize(.@t$) > 3 || getarraysize(.@t$) == 2 || atoi(.@t$[2]) < atoi(.@t$[1]) || (!compare(.@t$[0],"party") && !compare(.@t$[0],"guild"))) {
+				message strcharinfo(0),"Invalid 'type' input."; end; }
+			setarray .@Type[0],((compare(.@t$[0],"party"))?1:2),atoi(.@t$[1]),atoi(.@t$[2]);
+			deletearray .@t$[0],3; }
+		set .@Minutes, atoi(@whispervar4$);
+		if (compare(@whispervar5$,"split")) {
+			explode(.@Split$,@whispervar5$," ");
+			if (atoi(.@Split$[1]) < 2) {
+				message strcharinfo(0),"Invalid 'split' argument."; end; }
+			set .@Map$,"";
+			for(set .@i,0; .@i<atoi(.@Split$[1]); set .@i,.@i+1) {
+				message strcharinfo(0),"Input <map>,<x>,<y> for team "+(.@i+1)+".";
+				input .@j$;
+				if (countstr(.@j$,",") != 2) {
+					message strcharinfo(0),"Invalid 'map' input."; end; }
+				set .@Map$, .@Map$+.@j$+"|"; }
+			set .@Map$, substr(.@Map$,0,getstrlen(.@Map$)-2);
+		} else {
+			if (countstr(@whispervar5$,",") != 2) {
+				message strcharinfo(0),"Invalid 'map' input."; end; }
+			set .@Map$, @whispervar5$; }
+		if (compare(@whispervar6$,"restrict")) {
+			explode(.@RCheck$,@whispervar6$," ");
+			if (getarraysize(.@RCheck$) != 2 || !atoi(.@RCheck$[1]) || atoi(.@RCheck$[1]) > 4) {
+				message strcharinfo(0),"Invalid 'restrict' argument."; end; }
+			set .@Restrict$,"";
+			for(set .@i,0; .@i<atoi(.@RCheck$[1]); set .@i,.@i+1) {
+				message strcharinfo(0),"Input restriction "+(.@i+1)+".";
+				input .@r$;
+				explode(.@t$,.@r$," ");
+				if (compare(.@t$[0],"blevel") || compare(.@t$[0],"jlevel")) {
+					if (getarraysize(.@t$) != 3 || atoi(.@t$[2]) < atoi(.@t$[1])) {
+						message strcharinfo(0),"Invalid 'level' restriction."; end; } }
+				else if (compare(.@t$[0],"job")) {
+					if (getarraysize(.@t$) < 2) {
+						message strcharinfo(0),"Invalid 'job' restriction."; end; }
+					for(set .@j,1; .@j<=getarraysize(.@t$); set .@j,.@j+1)
+						if (compare(jobname(atoi(.@t$[.@j])),"Unknown")) {
+							message strcharinfo(0),"Invalid job restriction '"+.@t$[.@j]+"'."; end; } }
+				else if (compare(.@t$[0],"upper")) {
+					if (getarraysize(.@t$) != 2 || atoi(.@t$[1]) > 7) {
+						message strcharinfo(0),"Invalid 'upper' restriction."; end; } }
+				else {
+					message strcharinfo(0),"Invalid restriction '"+.@r$+"'."; end; }
+				set .@Restrict$, .@Restrict$+.@r$+"|";
+				deletearray .@t$[0], getarraysize(.@t$); }
+			set .@Restrict$, substr(.@Restrict$,0,getstrlen(.@Restrict$)-2); }
+		else if (compare(@whispervar6$,"manual")) set .@Restrict$,"manual";
+		dispbottom "Create Queue:";
+		dispbottom " > Name: "+@whispervar1$;
+		dispbottom " > Entries: "+@whispervar2$;
+		dispbottom " > Type: "+.@TypeDisp$[.@Type[0]]+((.@Type[0] && .@Type[2])?" size "+.@Type[1]+"~"+.@Type[2]:"");
+		dispbottom " > Time open: "+((.@Minutes)?.@Minutes+" minute(s)":"indefinitely");
+		dispbottom " > "+((getarraysize(.@Split$))?"Split into "+.@Split$[1]+" teams":"Warp to")+" <"+.@Map$+">";
+		dispbottom " > Restrictions: <"+((.@Restrict$ == "")?"none":.@Restrict$)+">";
+		if(select(" > ^0055FFCreate queue...^000000: > ^777777Cancel^000000")==2) close;
+		queue_create(@whispervar1$,atoi(.@Entries$[0]),atoi(.@Entries$[1]),.@Type[0],.@Type[1],.@Type[2],.@Minutes,.@Map$,.@Restrict$);
+		dispbottom "Whisper 'cancel' to close the queue before it executes, and 'destroy' after it executes.";
+		close;
+	}
+	else if (compare(@whispervar0$,"destroy")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		if (getarraysize(.Active$) && .@i == atoi(.Active$[0])) {
+			dispbottom "The queue is currently active. Use 'cancel' instead."; end; }
+		if(select(" > ^FF0000Destroy queue #"+.@i+"...^000000: > ^777777Cancel^000000")==2) close;
+		queue_destroy(.@i);
+		dispbottom "Queue #"+.@i+" destroyed. Whisper 'list' to view the new queue list.";
+		close;
+	}
+	else if (compare(@whispervar0$,"add")) {
+		set .@i,atoi(@whispervar1$);
+		set .@i$,"$queue"+.@i+"$";
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		query_sql("SELECT `char_id` FROM `char` WHERE `name` = '"+@whispervar2$+"' AND `online` ="+1,.@Exists);
+		if (@whispervar2$ == "" || !.@Exists) {
+			dispbottom "Invalid player specified."; end; }
+		if (getarraysize(getd(.@i$)) > 127) {
+			dispbottom "The queue can't hold any more players."; end; }
+		set .@Check$, ((atoi(.Active$[3]))?getcharid(atoi(.Active$[3]),@whispervar2$):@whispervar2$);
+		set .@Disp$, @whispervar2$;
+		if (atoi(.Active$[3])) set .@Disp$, ((atoi(.Active$[3])==1)?getpartyname(atoi(.@Check$)):getguildname(atoi(.@Check$)));
+		for(set .@j,2; .@j<getarraysize(getd(.@i$)); set .@j,.@j+1)
+			if (getd(.@i$+"["+.@j+"]") == .@Check$) {
+				dispbottom "'"+.@Disp$+"' is already in the queue."; end; }
+		setd .@i$+"["+getarraysize(getd(.@i$))+"]", .@Check$;
+		queue_cmd("mes",.@i,.@Disp$+" has been added to the queue.");
+		dispbottom "'"+@whispervar2$+"' added to the queue.";
+		if (!.Timer && getarraysize(getd(.@i$))-2 >= atoi(.Active$[1])) donpcevent "queue::OnQueue";
+		else if (.@Check$ != @whispervar2$) {
+			removemapflag .WaitingRoom$[0],33;
+			if (atoi(.Active$[3])==1) warpparty .WaitingRoom$[0], atoi(.WaitingRoom$[1]), atoi(.WaitingRoom$[2]), atoi(.@Check$);
+			else warpguild .WaitingRoom$[0], atoi(.WaitingRoom$[1]), atoi(.WaitingRoom$[2]), atoi(.@Check$);
+			setmapflag .WaitingRoom$[0],33; }
+		end;
+	}
+	else if (compare(@whispervar0$,"mes")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		if (@whispervar2$ == "") {
+			dispbottom "No message specified."; end; }
+		queue_cmd("mes",.@i,@whispervar2$);
+		dispbottom "Message given to queue #"+.@i+": "+@whispervar2$;
+		end;
+	}
+	else if (compare(@whispervar0$,"warp")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		if (countstr(@whispervar2$,",") != 2) {
+			dispbottom "Invalid map format. Use <map>,<x>,<y>."; end; }
+		queue_cmd("warp",.@i,@whispervar2$);
+		dispbottom "Warped queue #"+.@i+" to "+@whispervar2$+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"item")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		explode(.@Item$,@whispervar2$," ");
+		if (getarraysize(.@Item$) != 2 || !atoi(.@Item$[0]) || !atoi(.@Item$[1])) {
+			dispbottom "Invalid item syntax."; end; }
+		if (getitemname(atoi(.@Item$[0])) == "null") {
+			dispbottom "Invalid item ID #"+.@Item$[0]+"."; end; }
+		if (atoi(.@Item$[1]) > 30000) {
+			dispbottom "Invalid item amount."; end; }
+		queue_cmd("item",.@i,@whispervar2$);
+		dispbottom .@Item$[1]+"x "+getitemname(atoi(.@Item$[0]))+" given to queue #"+.@i+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"skill")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		explode(.@Skill$,@whispervar2$," ");
+		if (getarraysize(.@Skill$) != 2 || !atoi(.@Skill$[0]) || !atoi(.@Skill$[1])) {
+			dispbottom "Invalid skill syntax."; end; }
+		queue_cmd("skill",.@i,@whispervar2$);
+		dispbottom "Skill #"+.@Skill$[0]+" (level "+.@Skill$[1]+") casted on queue #"+.@i+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"recall")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		getmapxy(.@map$,.@x,.@y,0);
+		queue_cmd("warp",.@i,.@map$+","+.@x+","+.@y);
+		dispbottom "Recalled queue #"+.@i+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"return")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		queue_cmd("warp",.@i,"SavePoint"+((atoi(.Active$[3]))?"All":""));
+		dispbottom "Warped all members of queue #"+.@i+" to their save points.";
+		end;
+	}
+	else if (compare(@whispervar0$,"heal")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		queue_cmd("heal",.@i);
+		dispbottom "Healed queue #"+.@i+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"buff")) {
+		set .@i,atoi(@whispervar1$);
+		if (.List$[.@i] == "") {
+			dispbottom "That queue doesn't exist."; end; }
+		queue_cmd("buff",.@i);
+		dispbottom "Buffed queue #"+.@i+".";
+		end;
+	}
+	else if (compare(@whispervar0$,"list")) {
+		if (getarraysize(.List$)) {
+			dispbottom " > Existing Queues:";
+			for(set .@i,0; .@i<getarraysize(.List$); set .@i,.@i+1)
+				dispbottom "     ["+.@i+"] "+.List$[.@i]+" (size: "+(getarraysize(getd("$queue"+.@i+"$"))-2)+")"+((getarraysize(.Active$) && .@i == atoi(.Active$[0]))?"  *active":""); }
+		else dispbottom "No queues exist.";
+		end;
+	}
+	else if (compare(@whispervar0$,"help2")) {
+		dispbottom " ~~~~~~~~~~~~~~~~~~~~~~~~ 'Create' Syntax ~~~~~~~~~~~~~~~~~~~~~~~ ";
+		dispbottom " create # <name> # <min>~<max> # <solo|party|guild> { <min> <max> } # <minutes> # <map>,<x>,<y> || split <number> {# restrict <number> || manual}";
+		dispbottom " ";
+		dispbottom " > Name: Name of queue. Will be announced.";
+		dispbottom " > Min~Max: Player count. Needs 'min' to initiate, and will terminate at 'max'.";
+		dispbottom " > Type: Recruit single players, parties, or guilds. If party/guild, you can specify min and max (online) members required.";
+		dispbottom " > Minutes: Amount of time to wait. If 'min' is not reached, terminate queue. If 0, start and close queue immediately after 'min' is reached.";
+		dispbottom " > Map OR Split:";
+		dispbottom "   + Map: Map and coordinates to warp players to, when queue initiates.";
+		dispbottom "   + Split: Warp 'teams' to <number> different locations. Opens separate input window.";
+		dispbottom " > Restrictions OR Manual (optional):";
+		dispbottom "   + Restrictions: Add <number> queue restrictions (up to 4). Opens separate input window.";
+		dispbottom "     ~ blevel <min> <max> - Base level requirements.";
+		dispbottom "     ~ jlevel <min> <max> - Job level requirements.";
+		dispbottom "     ~ job <ID>{ <ID> { ... }} - List of specified job(s) to be allowed.";
+		dispbottom "     ~ upper <value> - Upper types to allow (bit value). [ 1:Normal | 2:Rebirth | 4:Baby ]";
+		dispbottom "   + Manual: Only GMs may queue players through the 'add' command. Ignores all parameters (except 'min' if time is 0).";
+		dispbottom " ";
+		dispbottom " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ";
+		end;
+	}
+	else if (compare(@whispervar0$,"help")) {
+		dispbottom " ~~~~~~~~~~~~~~~~~~~~~~ Queue Commands ~~~~~~~~~~~~~~~~~~~~~~ ";
+		dispbottom " ";
+		dispbottom " [Active Commands]";
+		dispbottom " + join - Join the active queue (player command).";
+		dispbottom " + leave - Leave the active queue (player command).";
+		dispbottom " > start - Initiate the current queue, regardless of status.";
+		dispbottom " > cancel - Close the current queue, and destroy it if needed.";
+		dispbottom " ";
+		dispbottom " [General Commands]";
+		dispbottom " > create # < ... > - Create a queue (type 'help2' for details).";
+		dispbottom " > destroy # <queue> - Destroy the specified queue.";
+		dispbottom " > add # <queue> # <player> - Add a player (or his party/guild) to specified queue.";
+		dispbottom " ";
+		dispbottom " [Core Action Commands]";
+		dispbottom " > mes # <queue> # <message> - Message all queue members.";
+		dispbottom " > warp # <queue> # <map>,<x>,<y> - Warp all queue members to a map.";
+		dispbottom " > item # <queue> # <ID> <amount> - Give an item to all queue members.";
+		dispbottom " > skill # <queue> # <ID> <level> - Cast a SELF-target SUPPORT skill on queue.";
+		dispbottom " ";
+		dispbottom " [Shortcut Action Commands]";
+		dispbottom " > recall # <queue> - Warp all queue members to your position.";
+		dispbottom " > return # <queue> - Warp all queue members to their save points.";
+		dispbottom " > heal # <queue> - Heal and revive all queue members.";
+		dispbottom " > buff # <queue> - Casts Level 10 AGI/Bless on all queue members.";
+		dispbottom " ";
+		dispbottom " [Reference Commands]";
+		dispbottom " > list - List the existing queues.";
+		dispbottom " > help - Command help.";
+		dispbottom " > help2 - 'Create' syntax explanation.";
+		dispbottom " ";
+		dispbottom " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ";
+		end;
+	}
+	else dispbottom "Invalid input. Type 'help' for a list of commands.";
+	end;
+
+OnQueue:
+	sleep .Timer;
+	if (getarraysize(.Active$) && (getarraysize(getd("$queue"+.Active$[0]+"$"))-2 >= atoi(.Active$[1]) || .Start)) {
+		if (atoi(.Active$[7]) == 1) queue_cmd("warp",atoi(.Active$[0]),.Active$[8]);
+		else {
+			copyarray .@m$[0],.Active$[8],atoi(.Active$[7]);
+			setarray .temp$[0]," "," ";
+			for(set .@i,0; .@i<atoi(.Active$[7]); set .@i,.@i+1) {
+				deletearray .temp$[2], getarraysize(.temp$)-2;
+				for(set .@j,.@i+2; .@j<getarraysize(getd("$queue"+.Active$[0]+"$")); set .@j,.@j+atoi(.Active$[7]))
+					set .temp$[getarraysize(.temp$)], getd("$queue"+.Active$[0]+"$["+.@j+"]");
+				queue_cmd("warp",atoi(.Active$[0]),.@m$[.@i],1); }
+			deletearray .temp$[0], getarraysize(.temp$); }
+		queue_cmd("mes",atoi(.Active$[0]),"Queue initiated...");
+		if (.Active$[atoi(.Active$[7])+8] != "manual") announce "The '"+getd("$queue"+.Active$[0]+"$[0]")+"' queue has closed.",0,0xD0D0D0;
+		deletearray .Active$[0],getarraysize(.Active$);
+		set .Timer,0;
+		set .Start,0;
+		end;
+	}
+	if (getarraysize(.Active$) && getarraysize(getd("$queue"+.Active$[0]+"$"))) {
+		announce "The '"+getd("$queue"+.Active$[0]+"$[0]")+"' queue has closed.",0,0xD0D0D0;
+		queue_cmd("mes",atoi(.Active$[0]),"Not enough players. Queue has ended.");
+		queue_destroy(atoi(.Active$[0]));
+		if (atoi(.Active$[3])) maprespawnguildid .WaitingRoom$[0],0,3;
+		deletearray .Active$[0], getarraysize(.Active$);
+		set .Timer,0;
+		end;
+	}
+	end;
+
+OnUpdate:
+	deletearray .List$, getarraysize(.List$);
+	for(set .@i,0; getarraysize(getd("$queue"+.@i+"$")); set .@i,.@i+1)
+		set .List$[.@i], getd("$queue"+.@i+"$[0]");
+	end;
+
+OnPCLoginEvent:
+	if (!getarraysize(.Active$)) end;
+	if (!atoi(.Active$[3])) end;
+	set .@Group, getcharid(atoi(.Active$[3]));
+	if (!.@Group) end;
+	set .@i$,"$queue"+atoi(.Active$[0])+"$";
+	for(set .@i,2; .@i<getarraysize(getd(.@i$)); set .@i,.@i+1)
+		if (.@Group==atoi(getd(.@i$+"["+.@i+"]"))) {
+			if (atoi(.Active$[3])==1) query_sql("SELECT `char_id` FROM `char` WHERE `party_id` = "+getcharid(1)+" AND `online` ="+1,.@List);
+			else query_sql("SELECT `char_id` FROM `char` WHERE `guild_id` = "+getcharid(2)+" AND `online` ="+1,.@List);
+			set .@RIndex, atoi(.Active$[7])+8;
+			for(set .@j,.@RIndex; .@j<.@RIndex+4; set .@j,.@j+1) {
+				if (.Active$[.@j] == "") break;
+				if (!queue_check(getcharid(3),.Active$[.@j])) {
+					set .@Check,1; break; } }
+			if (getarraysize(.@List) <= atoi(.Active$[5]) && !.@Check) warp .WaitingRoom$[0], atoi(.WaitingRoom$[1]), atoi(.WaitingRoom$[2]);
+			else {
+				set .@Name$, ((atoi(.Active$[3])==1)?getpartyname(.@Group):getguildname(.@Group));
+				queue_cmd("mes",atoi(.Active$[0]),.@Name$+" has left the registration queue ("+(getarraysize(getd(.@i$))-3)+" remaining).");
+				getmapxy(.@map$,.@x,.@y,0);
+				removemapflag .WaitingRoom$[0],33;
+				if (atoi(.Active$[3])==1) warpparty .@map$,.@x,.@y,.@Group;
+				else warpguild .@map$,.@x,.@y,.@Group;
+				setmapflag .WaitingRoom$[0],33;
+				deletearray getd(.@i$+"["+.@i+"]"),1; }
+			break; }
+	end;
+
+OnPCLogoutEvent:
+	if (!getarraysize(.Active$)) end;
+	set .@i$,"$queue"+atoi(.Active$[0])+"$";
+	set .@Type$, ((atoi(.Active$[3]))?getcharid(atoi(.Active$[3])):strcharinfo(0));
+	if (atoi(.Active$[3])) set .@Leader$, ((atoi(.Active$[3])==1)?getpartyleader(atoi(.@Type$)):getguildmaster(atoi(.@Type$)));
+	for(set .@i,2; .@i<getarraysize(getd(.@i$)); set .@i,.@i+1)
+		if (.@Type$==getd(.@i$+"["+.@i+"]")) {
+			if (atoi(.Active$[3])) {
+				if (strcharinfo(0) != .@Leader$) {
+					if (atoi(.Active$[3])==1) query_sql("SELECT `char_id` FROM `char` WHERE `party_id` = "+getcharid(1)+" AND `online` ="+1,.@List);
+					else query_sql("SELECT `char_id` FROM `char` WHERE `guild_id` = "+getcharid(2)+" AND `online` ="+1,.@List);
+					if (getarraysize(.@List) > atoi(.Active$[4]) && !@queue_exit) end; }
+				set .@Group, atoi(.@Type$);
+				set .@Type$, ((atoi(.Active$[3])==1)?getpartyname(.@Group):getguildname(.@Group)); }
+			queue_cmd("mes",atoi(.Active$[0]),.@Type$+" has left the registration queue ("+(getarraysize(getd(.@i$))-3)+" remaining).");
+			if (.@Group) {
+				removemapflag .WaitingRoom$[0],33;
+				if (atoi(.Active$[3])==1) warpparty "SavePointAll",0,0,.@Group;
+				else warpguild "SavePointAll",0,0,.@Group;
+				setmapflag .WaitingRoom$[0],33; }
+			deletearray getd(.@i$+"["+.@i+"]"),1;
+			break; }
+	end;
+
+OnPCLoadMapEvent:
+	if (strcharinfo(3) != .WaitingRoom$[0]) end;
+	if (!getarraysize(.Active$)) end;
+	message strcharinfo(0),"This is the queue waiting room. Your group may be removed from the queue if you exit the map or log out.";
+	while (strcharinfo(3) == .WaitingRoom$[0]) sleep2 5000;
+	set @queue_exit,1;
+	doevent "queue::OnPCLogoutEvent";
+	end;
+
+OnHour00:
+	if (!.Cleaning || getarraysize(.Active$) || getarraysize(.List$) <= .Cleaning) end;
+	for(set .@i,0; .@i<getarraysize(.List$)-.Cleaning; set .@i,.@i+1)
+		queue_destroy(0);
+	end;
+
+// Create arrays:
+// $queue<n>$: <name>, <0:character names | 1:party IDs | 2:guild IDs>, <list>
+//   .Active$: <queue>, <min>, <max>,<type (0|1|2)>, <type min>, <type max>,  <minutes>, <split>, <map,x,y>, { split maps, } {<restrict> {...}}
+
+function queue_create {
+	set .@Index, getarraysize(.List$);
+	if (getarraysize(.Active$)) return;
+	deletearray getd("$queue"+.@Index+"$"), getarraysize(getd("$queue"+.@Index+"$"));
+	setarray getd("$queue"+.@Index+"$[0]"),getarg(0),getarg(3);
+	set .Active$[0], .@Index;
+	for(set .@i,1; .@i<7; set .@i,.@i+1)
+		set .Active$[.@i],getarg(.@i);
+	explode(.@Maps$,getarg(7),"|");
+	set .Active$[7],getarraysize(.@Maps$);
+	for(set .@i,0; .@i<atoi(.Active$[7]); set .@i,.@i+1)
+		set .Active$[8+.@i],.@Maps$[.@i];
+	if (getarg(8,"") != "") {
+		set .@RDisp$,"";
+		set .@RIndex, atoi(.Active$[7])+8;
+		explode(.@Restriction$,getarg(8),"|");
+		for(set .@i,0; .@i<getarraysize(.@Restriction$); set .@i,.@i+1) {
+			set .Active$[.@RIndex+.@i], .@Restriction$[.@i];
+			explode(.@RTemp$,.@Restriction$[.@i]," ");
+			if (compare(.@RTemp$[0],"level"))
+				set .@RDisp$, .@RDisp$+((compare(.@RTemp$[0],"b"))?"base":"job")+" level "+.@RTemp$[1]+((.@RTemp$[1]==.@RTemp$[2])?"":"~"+.@RTemp$[2]);
+			else if (compare(.@RTemp$[0],"job")) {
+				for(set .@j,1; .@j<getarraysize(.@RTemp$); set .@j,.@j+1)
+					set .@RDisp$, .@RDisp$+jobname(atoi(.@RTemp$[.@j]))+"/";
+				set .@RDisp$, substr(.@RDisp$,0,getstrlen(.@RDisp$)-2)+" job"; }
+			else if (compare(.@RTemp$[0],"upper")) {
+				setarray .@Upper$[0],"normal","trans","baby";
+				for(set .@j,0; .@j<3; set .@j,.@j+1)
+					if (atoi(.@RTemp$[1])&(1<<.@j)) set .@RDisp$, .@RDisp$+.@Upper$[.@j]+"/";
+				set .@RDisp$, substr(.@RDisp$,0,getstrlen(.@RDisp$)-2)+" classes only"; }
+			else set .@Manual,1;
+			set .@RDisp$, .@RDisp$+", ";
+			deletearray .@RTemp$, getarraysize(.@RTemp$); }
+		set .@RDisp$, substr(.@RDisp$,0,getstrlen(.@RDisp$)-3); }
+	donpcevent "queue::OnUpdate";
+	set .Timer, getarg(6)*60000;
+	if (.Timer) donpcevent "queue::OnQueue";
+	if (.@Manual) return;
+	setarray .@TypeDisp$[0],"solo","party","guild";
+	announce "The '"+getarg(0)+"' queue has opened. "+getarg(1)+((getarg(1)==getarg(2))?"":"~"+getarg(2))+" "+.@TypeDisp$[getarg(3)]+" entries "
+			+((getarg(3) && getarg(4) && getarg(5))?"of "+getarg(4)+((getarg(4)==getarg(5))?"":"~"+getarg(5))+" members ":"")+"are permitted.",0;
+	sleep2 1500;
+	if (.@RIndex) {
+		announce "Registration is limited to: "+.@RDisp$,0; sleep2 1500; }
+	announce "Whisper 'join' to 'npc:queue' to sign up. Type 'leave' or log out to cancel."+((getarg(6))?" The queue will close automatically after "+getarg(6)+" minute(s).":""),0;
+	return; }
+
+function queue_destroy {
+	deletearray getd("$queue"+getarg(0)+"$[0]"),getarraysize(getd("$queue"+getarg(0)+"$"));
+	if (getarg(0) < getarraysize(.List$)-1)
+		for(set .@i,getarg(0); .@i<getarraysize(.List$)-1; set .@i,.@i+1) {
+			copyarray getd("$queue"+.@i+"$[0]"),getd("$queue"+(.@i+1)+"$[0]"),getarraysize(getd("$queue"+(.@i+1)+"$[0]"));
+			if (getarraysize(.Active$) && atoi(.Active$[0]) == .@i+1) set .Active$[0],.@i;
+			deletearray getd("$queue"+(.@i+1)+"$[0]"),getarraysize(getd("$queue"+(.@i+1)+"$[0]")); }
+	donpcevent "queue::OnUpdate";
+	return; }
+
+function queue_cmd {
+	freeloop(1);
+	if (getarg(0)=="warp") {
+		explode(.@Map$,getarg(2),",");
+		if (charat(.@Map$[0],0)==" ") set .@Map$[0], delchar(.@Map$[0],0);
+		removemapflag .WaitingRoom$[0],33; }
+	else if (getarg(0)=="item") explode(.@Item$,getarg(2)," ");
+	else if (getarg(0)=="skill") explode(.@Skill$,getarg(2)," ");
+	else if (getarg(0)=="heal") set .@Return, getcharid(3);
+	set .@Type, atoi(getd("$queue"+getarg(1)+"$[1]"));
+	set .@Queue$, ((getarg(3,0))?".temp$":"$queue"+getarg(1)+"$");
+	for(set .@i,2; .@i<getarraysize(getd(.@Queue$)); set .@i,.@i+1) {
+		set .@j$,getd(.@Queue$+"["+.@i+"]");
+		if (getarg(0)=="warp") switch(.@Type) {
+			case 0: if (getcharid(0,.@j$)) warpchar .@Map$[0],atoi(.@Map$[1]),atoi(.@Map$[2]),getcharid(0,.@j$); break;
+			case 1: warpparty .@Map$[0],atoi(.@Map$[1]),atoi(.@Map$[2]),atoi(.@j$); break;
+			case 2: warpguild .@Map$[0],atoi(.@Map$[1]),atoi(.@Map$[2]),atoi(.@j$); break; }
+		else if (getarg(0)=="mes") switch(.@Type) {
+			case 0: message .@j$,getarg(2); break;
+			case 1:
+				getpartymember atoi(.@j$);
+				for(set .@j,0; .@j<$@partymembercount; set .@j,.@j+1)
+					message $@partymembername$[.@j],getarg(2);
+				break;
+			case 2:
+				deletearray .@guild$[0],getarraysize(.@guild$);
+				query_sql("SELECT `name` FROM `char` WHERE `guild_id` = "+atoi(.@j$)+" AND `online` ="+1,.@guild$);
+				for(set .@j,0; .@j<getarraysize(.@guild$); set .@j,.@j+1)
+					message .@guild$[.@j],getarg(2);
+				break; }
+		else if (getarg(0)=="heal" || getarg(0)=="buff") {
+			switch (.@Type) {
+				case 0:
+					attachrid getcharid(3,.@j$);
+					if (getarg(0)=="heal") {
+						if (HP) percentheal 100,100;
+						else atcommand "@alive";
+						specialeffect2 313; }
+					else {
+						sc_start SC_INCREASEAGI,240000,10; specialeffect2 37;
+						sc_start SC_BLESSING,240000,10; specialeffect2 42; }
+					break;
+				case 1:
+					getpartymember atoi(.@j$),2;
+					for(set .@j,0; .@j<$@partymembercount; set .@j,.@j+1) {
+						attachrid $@partymemberaid[.@j];
+						if (getarg(0)=="heal") {
+							if (HP) percentheal 100,100;
+							else atcommand "@alive";
+							specialeffect2 313; }
+						else {
+							sc_start SC_INCREASEAGI,240000,10; specialeffect2 37;
+							sc_start SC_BLESSING,240000,10; specialeffect2 42; } }
+					break;
+				case 2:
+					deletearray .@guild[0],getarraysize(.@guild);
+					query_sql("SELECT `account_id` FROM `char` WHERE `guild_id` = "+atoi(.@j$)+" AND `online` ="+1,.@guild);
+					for(set .@j,0; .@j<getarraysize(.@guild); set .@j,.@j+1) {
+						attachrid .@guild[.@j];
+						if (getarg(0)=="heal") {
+							if (HP) percentheal 100,100;
+							else atcommand "@alive";
+							specialeffect2 313; }
+						else {
+							sc_start SC_INCREASEAGI,240000,10; specialeffect2 37;
+							sc_start SC_BLESSING,240000,10; specialeffect2 42; } }
+					break; }
+				attachrid .@Return; }
+		else switch(.@Type) {
+			case 0:
+				if (getarg(0)=="item") getitem atoi(.@Item$[0]),atoi(.@Item$[1]),getcharid(3,.@j$);
+				else if (getarg(0)=="skill") unitskilluseid getcharid(3,.@j$),atoi(.@Skill$[0]),atoi(.@Skill$[1]);
+				break;
+			case 1:
+				getpartymember atoi(.@j$),2;
+				for(set .@j,0; .@j<$@partymembercount; set .@j,.@j+1) {
+					if (getarg(0)=="item") getitem atoi(.@Item$[0]),atoi(.@Item$[1]),$@partymemberaid[.@j];
+					else if (getarg(0)=="skill") unitskilluseid $@partymemberaid[.@j],atoi(.@Skill$[0]),atoi(.@Skill$[1]); }
+				break;
+			case 2:
+				deletearray .@guild[0],getarraysize(.@guild);
+				query_sql("SELECT `account_id` FROM `char` WHERE `guild_id` = "+atoi(.@j$)+" AND `online` ="+1,.@guild);
+				for(set .@j,0; .@j<getarraysize(.@guild); set .@j,.@j+1) {
+					if (getarg(0)=="item") getitem atoi(.@Item$[0]),atoi(.@Item$[1]),.@guild[.@j];
+					else if (getarg(0)=="skill") unitskilluseid .@guild[.@j],atoi(.@Skill$[0]),atoi(.@Skill$[1]); }
+				break; } }
+	if (getarg(0)=="warp") setmapflag .WaitingRoom$[0],33;
+	freeloop(0);
+	return; }
+
+function queue_check {
+	set .@Return, getcharid(3);
+	explode(.@r$,getarg(1)," ");
+	attachrid(getarg(0));
+	if (compare(.@r$[0],"blevel")) {
+		if (BaseLevel < atoi(.r$[1]) || BaseLevel > atoi(.@r$[2])) {
+			attachrid .@Return; return 0; }
+	} else if (compare(.@r$[0],"jlevel")) {
+		if (JobLevel < atoi(.@r$[1]) || JobLevel > atoi(.@r$[2])) {
+			attachrid .@Return; return 0; }
+	} else if (compare(.@r$[0],"job")) {
+		for(set .@k,1; .@k<getarraysize(.@r$); set .@k,.@k+1)
+			if (Class == atoi(.@r$[.@k])) { set .@y,1; break; }
+		if (!.@y) {
+			attachrid .@Return; return 0; }
+	} else {
+		if (!(atoi(.@r$[1])&(1<<Upper))) {
+			attachrid .@Return; return 0; } }
+	attachrid .@Return;
+	return 1; }
+}

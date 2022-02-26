@@ -1,0 +1,146 @@
+	      /*          -------------------------          *
+	       *              Fireworks Contest              *
+	       *          -------------------------          *
+	       *            [ Euphy ~ Dec. 2013 ]            */
+
+prontera,155,183,4	script	#firework_contest	802,{
+	if (.Active) end;
+	.Active = 1;
+	donpcevent strnpcinfo(0)+"::OnEnable";
+	sleep 1000;
+	donpcevent strnpcinfo(0)+"::OnEffect1";
+	sleep 750;
+	donpcevent strnpcinfo(0)+"::OnEffect1";
+	sleep 3250;
+	donpcevent strnpcinfo(0)+"::OnEffect2";
+	sleep 1000;
+	donpcevent strnpcinfo(0)+"::OnEffect2";
+	sleep 2000;
+	donpcevent strnpcinfo(0)+"::OnDisable";
+	donpcevent strnpcinfo(0)+"::OnEffect3";
+	sleep 500;
+	donpcevent strnpcinfo(0)+"::OnEffect4";
+	sleep 7000;
+	.Active = 0;
+	donpcevent strnpcinfo(0)+"::OnInit";
+	end;
+
+OnInit:
+	while (!.Active) {
+		specialeffect EF_BEGINSPELL6;
+		sleep 425;
+	}
+	end;
+
+OnEnable:
+	specialeffect EF_TRUESIGHT;
+	setnpcdisplay(strnpcinfo(0),909);
+	initnpctimer;
+	end;
+
+OnTimer1500:
+OnTimer2000:
+OnTimer2500:
+OnTimer3000:
+OnTimer3500:
+OnTimer4000:
+OnTimer4500:
+OnTimer5000:
+OnTimer5500:
+	specialeffect EF_EXIT2;
+	movenpc strnpcinfo(0),rand(148,163),rand(177,187);
+	donpcevent strnpcinfo(0)+"::OnSpawn";
+	end;
+
+OnTimer6000:
+	stopnpctimer;
+	movenpc strnpcinfo(0),155,182;
+	specialeffect EF_SPR_LIGHTPRINT;
+	donpcevent strnpcinfo(0)+"::OnSpawn";
+	end;
+
+OnSpawn:
+	getmapxy(.@map$,.@x,.@y,1);
+	for (.@i = 0; .@i < 4; .@i++) {
+		makeitem "Firecracker",1,.@map$,.@x,.@y;
+		monster .@map$,.@x,.@y," ",1002,1,strnpcinfo(0)+"::OnPoringKilled",rand(3);
+	}
+	areamobuseskill .@map$,.@x,.@y,1,1002,"AL_INCAGI",1,0,0,e_ho,0;
+	areamobuseskill .@map$,.@x,.@y,1,1002,"NPC_INVINCIBLE",1,0,0,0,0;
+	end;
+
+OnPoringKilled:
+	end;
+
+OnDisable:
+	setnpcdisplay(strnpcinfo(0),802);
+	killmonster "prontera",strnpcinfo(0)+"::OnPoringKilled";
+	end;
+
+OnEffect1:
+	for (.@i = 1; .@i <= 20; .@i++) {
+		donpcevent "#firework" + .@i + "::OnEffect1";
+		sleep 200;
+	}
+	end;
+
+OnEffect2:
+	for (.@i = 1; .@i <= 20; .@i++) {
+		donpcevent "#firework" + .@i + "::OnEffect2";
+		sleep 75;
+	}
+	end;
+
+OnEffect3:
+	for (.@i = 1; .@i <= 20; .@i++) {
+		donpcevent "#firework" + .@i + "::OnEffect3";
+		sleep 75;
+	}
+	end;
+
+OnEffect4:
+	for (.@i = 1; .@i <= 20; .@i++) {
+		donpcevent "#firework" + .@i + "::OnEffect4";
+		sleep 75;
+	}
+	end;
+}
+
+-	script	#firework_contest_eff	-1,{
+OnEffect1:
+	specialeffect EF_POK_JAP;
+	specialeffect EF_GREEN99_3;
+	end;
+
+OnEffect2:
+	specialeffect EF_KYRIE;
+	end;
+
+OnEffect3:
+	specialeffect EF_SPR_LIGHTPRINT;
+	end;
+
+OnEffect4:
+	specialeffect EF_BOTTOM_VO;
+	end;
+}
+prontera,148,177,0	duplicate(#firework_contest_eff)	#firework1	139
+prontera,151,177,0	duplicate(#firework_contest_eff)	#firework2	139
+prontera,154,177,0	duplicate(#firework_contest_eff)	#firework3	139
+prontera,157,177,0	duplicate(#firework_contest_eff)	#firework4	139
+prontera,160,177,0	duplicate(#firework_contest_eff)	#firework5	139
+prontera,163,177,0	duplicate(#firework_contest_eff)	#firework6	139
+prontera,163,179,0	duplicate(#firework_contest_eff)	#firework7	139
+prontera,163,181,0	duplicate(#firework_contest_eff)	#firework8	139
+prontera,163,183,0	duplicate(#firework_contest_eff)	#firework9	139
+prontera,163,185,0	duplicate(#firework_contest_eff)	#firework10	139
+prontera,163,187,0	duplicate(#firework_contest_eff)	#firework11	139
+prontera,160,187,0	duplicate(#firework_contest_eff)	#firework12	139
+prontera,157,187,0	duplicate(#firework_contest_eff)	#firework13	139
+prontera,154,187,0	duplicate(#firework_contest_eff)	#firework14	139
+prontera,151,187,0	duplicate(#firework_contest_eff)	#firework15	139
+prontera,148,187,0	duplicate(#firework_contest_eff)	#firework16	139
+prontera,148,185,0	duplicate(#firework_contest_eff)	#firework17	139
+prontera,148,183,0	duplicate(#firework_contest_eff)	#firework18	139
+prontera,148,181,0	duplicate(#firework_contest_eff)	#firework19	139
+prontera,148,179,0	duplicate(#firework_contest_eff)	#firework20	139

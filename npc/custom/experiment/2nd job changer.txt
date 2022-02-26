@@ -1,0 +1,1766 @@
+prontera,171,90,4	script	Job Master	415,{
+	set .@name$,"[Job Master]";
+	if(SkillPoint != 0) goto L_skp;
+	if(Class == 1) goto L_First;
+	if(Class == 2) goto L_First2;
+	if(Class == 3) goto L_First3;
+	if(Class == 4) goto L_First4;
+	if(Class == 5) goto L_First5;
+	if(Class == 6) goto L_First6;
+	if(Class == 4046) goto L_taekwon2;
+	if(Class == 7) goto L_reborn;
+	if(Class == 8) goto L_reborn;
+	if(Class == 9) goto L_reborn;
+	if(Class == 10) goto L_reborn;
+	if(Class == 11) goto L_reborn;
+	if(Class == 12) goto L_reborn;
+	if(Class == 13) goto L_reborn;
+	if(Class == 14) goto L_reborn;
+	if(Class == 15) goto L_reborn;
+	if(Class == 16) goto L_reborn;
+	if(Class == 17) goto L_reborn; 
+	if(Class == 18) goto L_reborn;
+	if(Class == 19) goto L_reborn; 
+	if(Class == 20) goto L_reborn;
+	if(Class == 21) goto L_reborn;
+	if(Class == 22) goto L_nomore;
+	if(Class == 23) goto L_nomore;
+	if(Class == 24) goto L_nomore;
+	if(Class == 25) goto L_nomore;
+	if(Class == 26) goto L_nomore;
+	if(Class == 27) goto L_nomore;
+	if(Class == 4001) goto L_high;
+	if(Class == 4002) goto L_high2;
+	if(Class == 4003) goto L_high2;
+	if(Class == 4004) goto L_high2;
+	if(Class == 4005) goto L_high2;
+	if(Class == 4006) goto L_high2;
+	if(Class == 4007) goto L_high2;
+	if(Class == 4008) goto L_third;
+	if(Class == 4009) goto L_third;
+	if(Class == 4010) goto L_third;
+	if(Class == 4011) goto L_third;
+	if(Class == 4012) goto L_third;
+	if(Class == 4013) goto L_third;
+	if(Class == 4014) goto L_third;
+	if(Class == 4015) goto L_third;
+	if(Class == 4016) goto L_third;
+	if(Class == 4017) goto L_third;
+	if(Class == 4018) goto L_third;
+	if(Class == 4019) goto L_third;
+	if(Class == 4020) goto L_third;
+	if(Class == 4021) goto L_third;	
+	if(Class == 4022) goto L_third;
+	if(Class == 4023) goto L_2ndbaby;
+	if(Class == 4024) goto L_2ndbaby1;
+	if(Class == 4025) goto L_2ndbaby2;
+	if(Class == 4026) goto L_2ndbaby3;
+	if(Class == 4027) goto L_2ndbaby4;
+	if(Class == 4028) goto L_2ndbaby5;
+	if(Class == 4029) goto L_2ndbaby6;
+	if(Class == 4030) goto L_baby3rd;
+	if(Class == 4031) goto L_baby3rd;
+	if(Class == 4032) goto L_baby3rd;	
+	if(Class == 4033) goto L_baby3rd;
+	if(Class == 4034) goto L_baby3rd;
+	if(Class == 4035) goto L_baby3rd;
+	if(Class == 4036) goto L_baby3rd;
+	if(Class == 4037) goto L_baby3rd;
+	if(Class == 4038) goto L_baby3rd;
+	if(Class == 4039) goto L_baby3rd;
+	if(Class == 4040) goto L_baby3rd;
+	if(Class == 4041) goto L_baby3rd;
+	if(Class == 4042) goto L_baby3rd;
+	if(Class == 4043) goto L_baby3rd;
+	if(Class == 4044) goto L_baby3rd;
+	if(Class == 4045) goto L_nomore;
+	if(Class == 4047) goto L_nomore;
+	if(Class == 4048) goto L_nomore;
+	if(Class == 4049) goto L_nomore;
+	if(Class == 4054) goto L_none;
+	if(Class == 4055) goto L_none;
+	if(Class == 4056) goto L_none;
+	if(Class == 4057) goto L_none;
+	if(Class == 4058) goto L_none;
+	if(Class == 4059) goto L_none; 
+	if(Class == 4060) goto L_none;
+	if(Class == 4061) goto L_none;
+	if(Class == 4062) goto L_none;
+	if(Class == 4063) goto L_none;
+	if(Class == 4064) goto L_none;
+	if(Class == 4065) goto L_none;
+	if(Class == 4066) goto L_none;
+	if(Class == 4067) goto L_none;
+	if(Class == 4068) goto L_none;
+	if(Class == 4069) goto L_none;
+	if(Class == 4070) goto L_none;
+	if(Class == 4071) goto L_none;
+	if(Class == 4072) goto L_none;
+	if(Class == 4073) goto L_none;
+	if(Class == 4074) goto L_none;
+	if(Class == 4075) goto L_none; 
+	if(Class == 4076) goto L_none; 
+	if(Class == 4077) goto L_none;
+ 	if(Class == 4078) goto L_none;
+	if(Class == 4079) goto L_none;
+	if(Class == 4080) goto L_none; 
+	if(Class == 4081) goto L_none;
+	if(Class == 4082) goto L_none;
+	if(Class == 4083) goto L_none;
+	if(Class == 4084) goto L_none;
+	if(Class == 4085) goto L_none;
+	if(Class == 4086) goto L_none;
+	if(Class == 4087) goto L_none;	
+	if(Class == 4096) goto L_none;
+	if(Class == 4097) goto L_none;
+	if(Class == 4098) goto L_none;
+	if(Class == 4099) goto L_none;
+	if(Class == 4100) goto L_none;
+	if(Class == 4101) goto L_none;
+	if(Class == 4102) goto L_none;
+	if(Class == 4103) goto L_none;
+	if(Class == 4104) goto L_none;
+	if(Class == 4105) goto L_none;
+	if(Class == 4106) goto L_none;
+	if(Class == 4107) goto L_none;
+	if(Class == 4108) goto L_none;
+	if(SkillPoint != 0){ 
+		mes .@name$;
+		mes "I'm sorry, please use up all your skill points before changing jobs";
+		mes "Please come again soon!";
+		close;
+	}
+	mes .@name$;
+	if(JobLevel < 10) goto L_Not1st;
+	mes "Welcome,please select the job you wish to change to:";
+	menu "Swordsman",-,"Mage",L_Mage,"Archer",L_Archer,"Acolyte",L_Acolyte,"Merchant",L_Merchant,"Thief",L_Thief,"Super Novice",L_Supernovice,"Taekwon",L_Taekwon,"Gunslinger",L_Gunslinger,"Ninja",L_Ninja,"Baby",L_Baby;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Swordsman?";
+	menu "No",-,"Yes",L_yes;
+	close;
+
+L_Baby:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Novice?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Novice.";
+	jobchange 4023;
+	close;
+
+L_2ndbaby:
+	if(JobLevel < 10) goto L_Not1st;
+	mes .@name$;
+	mes "Please choose the job you wish to change to:";
+	menu "Baby Swordsman",-,"Baby Magician",L_babymage,"Baby Archer",L_babyarcher,"Baby Acolyte",L_babyacolyte,"Baby Merchant",L_babymerchant,"Baby Thief",L_babythief,"Super Baby",L_babysuper;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Swordsman?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Swordsman.";
+	jobchange 4024;
+	close;
+
+L_babymage:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Mage?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Magician.";
+	jobchange 4025;
+	close;
+
+L_babyarcher:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Archer?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Archer.";
+	jobchange 4026;
+	close;
+
+L_babyacolyte:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Acolyte?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Acolyte.";
+	jobchange 4027;
+	close;
+
+L_babymerchant:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Merchant?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Merchant.";
+	jobchange 4028;
+	close;
+
+L_babythief:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Thief?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Thief.";
+	jobchange 4029;
+	close;
+
+L_babysuper:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Super Baby?";
+	menu "Yes",-,"No",L_bye2;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Super Baby.";
+	jobchange 4045;
+	close;
+
+L_2ndbaby1:
+	mes "I see that you're a Baby Swordsman,";
+	mes "To what job would you like to change?";
+	menu "Baby Knight",-,"Baby Crusader",L_BabyCrusader;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Knight.";
+	jobchange 4030;
+	close;
+
+L_bulok:
+	mes .@name$;
+	mes "You have to have atleast a job level of 40 to change.";
+	close;
+
+L_2ndbaby2:
+	mes "I see that you're a Baby Magician,";
+	mes "To what job would you like to change?";
+	menu "Baby Wizard",-,"Baby Sage",L_BabySage;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Wizard?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Wizard.";
+	jobchange 4032;
+	close;
+
+
+L_2ndbaby3:
+	mes "I see that you're a Baby Archer,";
+	mes "To what job would you like to change into?";
+	next;
+	if(Sex==1) goto L_totoy;
+	if(Sex==0) goto L_nene;
+
+L_totoy:
+	menu "Baby Hunter",-,"Baby Bard",L_BabyBard;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Hunter?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes "Congratulations! You're now a Baby Hunter.";
+	jobchange 4034;
+	close;
+
+L_nene:
+	menu "Baby Hunter",-,"Baby Dancer",L_BabyDancer;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Hunter?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes "Congratulations! You're now a Baby Hunter.";
+	jobchange 4034;
+	close;
+
+
+L_2ndbaby4:
+	mes "I see that you're a Baby Acolyte,";
+	mes "To what job would you like to change?";
+	menu "Baby Priest",-,"Baby Monk",L_BabyMonk;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Priest?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Priest.";
+	jobchange 4031;
+	close;
+
+
+L_2ndbaby5:
+	mes "I see that you're a Baby Merchant,";
+	mes "To what job would you like to change?";
+	menu "Baby Blacksmith",-,"Baby Alchemist",L_BabyAlchemist;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Blacksmith?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Blacksmith.";
+	jobchange 4033;
+	close;
+
+L_2ndbaby6:
+	mes "I see that you're a Baby Thief,";
+	mes "To what job would you like to change?";
+	menu "Baby Assasin",-,"Baby Rogue",L_BabyRogue;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Assasin?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Assasin.";
+	jobchange 4035;
+	close; 
+
+L_BabyCrusader:
+	mes "Are you sure you want to change to a Baby Crusader?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Crusader?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Crusader.";
+	jobchange 4037;
+	close;
+
+L_BabySage:
+	mes "Are you sure you want to change to a Baby Sage?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Sage?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Sage.";
+	jobchange 4039;
+	close;
+
+L_BabyBard:
+	mes "Are you sure you want to change to a Baby Bard?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Bard?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Bard.";
+	jobchange 4042;
+	close;
+
+L_BabyDancer:
+	mes "Are you sure you want to change to a Baby Dancer?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Dancer.";
+	jobchange 4043;
+	close;
+
+L_BabyMonk:
+	mes "Are you sure you want to change to a Baby Monk?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Monk?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Monk.";
+	jobchange 4038;
+	close;
+
+L_BabyAlchemist:
+	mes "Are you sure you want to change to a Baby Alchemist?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Alchemist?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Alchemist.";
+	jobchange 4041;
+	close;
+
+L_BabyRogue:
+	mes "Are you sure you want to change to a Baby Rogue?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_bulok;
+	mes .@name$;
+	mes "Are you sure you want to change into a Baby Rogue?";
+	menu "Yes",-,"No",L_thanks;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Rogue.";
+	jobchange 4040;
+	close;
+
+
+L_Not1st:
+	mes "I'm sorry you don't meet the requirements,";
+	mes "You need to have job level at 10.";
+	close;
+
+
+L_yes:
+	mes .@name$;
+	jobchange 1;
+	mes "Congratulations! You are now a Swordsman.";
+	close;
+
+L_Mage:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Mage?";
+	menu "No",-,"Yes",L_yes2;
+	close;
+
+L_yes2:
+	mes .@name$;
+	jobchange 2;
+	mes "Congratulations! You're now a Mage.";
+	close;
+
+L_yes3:
+	mes .@name$;
+	jobchange 3;
+	mes "Congratulations! You're now an Archer.";
+	close;
+
+L_yes4:
+	mes .@name$;
+	jobchange 4;
+	mes "Congratulations! You're now an Acolyte.";
+	close;
+
+L_yes5:
+	mes .@name$;
+	jobchange 5;
+	mes "Congratulations! You're now a Merchant.";
+	close;
+
+L_yes6:
+	mes .@name$;
+	jobchange 6;
+	mes "Congratulations! You're now a Thief.";
+	close;
+
+L_yes7:
+	mes .@name$;
+	jobchange 23;
+	mes "Congratulations! You're now a Super Novice.";
+	close;
+
+L_yes8:
+	mes .@name$;
+	jobchange 4046;
+	mes "Congratulations! You're now a Taekwon.";
+	close;
+
+L_yes9:
+	mes .@name$;
+	jobchange 24;
+	mes "Congratulations! You're now a Gunslinger.";
+	close;
+
+L_yes10:
+	mes .@name$;
+	jobchange 25;
+	mes "Congratulations! You're now a Ninja.";
+	close;
+
+L_Archer:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to an Archer?";
+	menu "No",-,"Yes",L_yes3;
+	close;
+
+L_Acolyte:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to an Acolyte?";
+	menu "No",-,"Yes",L_yes4;
+	close;
+
+L_Merchant:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Merchant?";
+	menu "No",-,"Yes",L_yes5;
+	close;
+
+L_Thief:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Thief?";
+	menu "No",-,"Yes",L_yes6;
+	close;
+
+L_SuperNovice:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Super Novice?";
+	menu "No",-,"Yes",L_yes7;
+	close;
+
+L_Taekwon:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Taekwon?";
+	menu "No",-,"Yes",L_yes8;
+	close;
+
+
+L_Gunslinger:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Gunslinger?";
+	menu "No",-,"Yes",L_yes9;
+	close;
+
+L_Ninja:
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Ninja?";
+	menu "No",-,"Yes",L_yes10;
+	close;
+
+L_First:
+	mes .@name$;
+	mes "I see that you're a Swordsman,";
+	mes "To what job would you like to change into?";
+	menu "Knight",-,"Crusader",L_Crusader;
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Knight?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	mes .@name$;
+	jobchange 7;
+	set swordsman,1;
+	mes "Congratulations! You're now a Knight.";
+	close;
+
+L_nofirst:
+	mes .@name$;
+	mes "You can't change unless you have a job level of 40.";
+	close;
+
+L_Crusader:
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Crusader?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	mes .@name$;
+	jobchange 14;
+	set swordsman,2;
+	mes "Congratulations! You're now a Crusader.";
+	close;
+
+L_First2:
+	mes .@name$;
+	mes "I see that you're a Magician,";
+	mes "To what job would you like to change into?";
+	menu "Wizard",-,"Sage",L_Sage;
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Wizard?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 9;
+	set mage,1;
+	mes "Congratulations! You're now a Wizard.";
+	close;
+
+L_Sage:
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Sage?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 16;
+	set mage,2;
+	mes "Congratulations! You're now a Sage.";
+	close;
+
+
+L_First3:
+	mes .@name$;
+	mes "I see that you're an Archer,";
+	mes "To what job would you like to change into?";
+	next;
+	if(Sex==1) goto L_boy;
+	if(Sex==0) goto L_girl;
+
+L_boy:
+	menu "Hunter",-,"Bard",L_Bard;
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Hunter?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 11;	
+	set archer,1;
+	mes "Congratulations! You're now a Hunter.";
+	close;
+
+L_girl:
+	menu "Hunter",-,"Dancer",L_Dancer;
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Hunter?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 11;	
+	set archer,1;
+	mes "Congratulations! You're now a Hunter.";
+	close;
+
+L_Bard:
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Bard?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 19;
+	set archer,2;
+	mes "Congratulations! You're now a Bard!";
+	close;
+
+L_Dancer:
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Dancer?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 20;
+	set archer,2;
+	mes "Congratulations! You're now a Dancer!";
+	close;
+
+L_First4:
+	mes .@name$;
+	mes "I see that you're an Acoltye,";
+	mes "To what job would you like to change into?";
+	menu "Priest",-,"Monk",L_Monk;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to be a Priest?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	jobchange 8;
+	set acolyte,1;
+	mes "Congratulations! You're now a Priest.";
+	close;
+
+L_Monk:
+	mes .@name$;
+	mes "Are you sure you want to be a Monk?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	if(JobLevel < 40) goto L_nofirst;
+	jobchange 15;
+	set acolyte,2;
+	mes "Congratulations! You're now a Monk.";
+	close;
+
+L_First5:
+	mes .@name$;
+	mes "I see that you're a Merchant,";
+	mes "To what job would you like to change into?";
+	menu "Blacksmith",-,"Alchemist",L_Alchemist;
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Blacksmith?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 10;
+	set merchant,1;
+	mes "Congratulations! You're now a Blacksmith.";
+	close;
+
+L_Alchemist:
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be an Alchemist?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 18;
+	set merchant,2;
+	mes "Congratulations! You're now an Alchemist.";
+	close;
+
+L_First6:
+	mes .@name$;
+	mes "I see that you're a Thief,";
+	mes "To what job would you like to change into?";
+	menu "Assassin",-,"Rogue",L_Rogue;
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be an Assassin?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 12;
+	set thief,1;
+	mes "Congratulations! You're now an Assassin.";
+	close;
+
+L_Rogue:
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Rogue?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 17;
+	set thief,2;
+	mes "Congratulations! You're now a Rogue.";
+	close;
+
+L_First10:
+	mes .@name$;
+	mes "I see that you're a Taekwon,";
+	mes "To what job would you like to change into? ";
+	menu "Star Gladiator","Soul Linker",L_SoulLinker;
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Star Gladiator?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 4047;
+	mes "Congratulations! You're now a Star Gladiator.";
+	close;
+
+L_SoulLinker:
+	mes .@name$;
+	if(JobLevel < 40) goto L_nofirst;
+	mes .@name$;
+	mes "Are you sure you want to be a Soul Linker?";
+	menu "No",L_thanks,"Yes",-;
+	next;
+	jobchange 4049;
+	mes "Congratulations! You're know a Soul Linker.";
+	close;
+
+L_reborn:
+	mes .@name$;
+	mes "I see that you're a second class,";
+	mes "Would you like to reborn or change to a Regular 3rd Class?";
+	next;
+	menu "Reborn",-,"Change to a Regular 3rd Class",L_third2,"Nothing",L_bye;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to reborn?";
+	menu "No",L_thanks,"Yes",-;
+	if(SkillPoint != 0) goto L_skp;
+	if(BaseLevel < 99) goto L_Notbase;
+	if(JobLevel < 50) goto L_Notjob;
+	
+	set BaseLevel,1;
+	set JobLevel,1;
+	jobchange 4001;
+	resetskill;
+	resetstatus;
+	set SkillPoint,0;
+	if(rebirthcount == 0) goto L_0;
+	if(rebirthcount == 1) goto L_1;
+	if(rebirthcount == 2) goto L_2;
+	if(rebirthcount == 3) goto L_3;
+	if(rebirthcount == 4) goto L_4;
+	if(rebirthcount == 5) goto L_5;
+	if(rebirthcount == 6) goto L_6;
+	if(rebirthcount == 7) goto L_7;
+	if(rebirthcount == 8) goto L_8; 
+	if(rebirthcount == 9) goto L_9;
+	if(rebirthcount == 10) goto L_10;
+	close;
+L_0:
+set StatusPoint,StatusPoint+52;
+jobchange 4001;
+close;
+
+L_1:
+set StatusPoint,StatusPoint+368;
+jobchange 4001;
+close;
+	
+L_2:
+set StatusPoint,StatusPoint+668;
+jobchange 4001;
+close;
+
+L_3:
+set StatusPoint,StatusPoint+968;
+jobchange 4001;
+close;
+
+L_4:
+set StatusPoint,StatusPoint+1268;
+jobchange 4001;
+close;
+
+L_5:
+set StatusPoint,StatusPoint+1568;
+jobchange 4001;
+close;
+
+L_6:
+set StatusPoint,StatusPoint+1868;
+jobchange 4001;
+close;
+
+L_7:
+set StatusPoint,StatusPoint+2168;
+jobchange 4001;
+close;
+
+L_8:
+set StatusPoint,StatusPoint+2468;
+jobchange 4001;
+close;
+
+L_9:
+set StatusPoint,StatusPoint+2768;
+jobchange 4001;
+close;
+
+L_10:;
+set StatusPoint,StatusPoint+3680;
+jobchange 4001;
+close;
+
+L_Notbase:
+	mes .@name$;
+	mes "Sorry but you need to be at level 99.";
+	close;
+
+L_Notjob:
+	mes .@name$;
+	mes "Sorry but you need to be at job level 70.";
+	close;
+
+L_Noreb:
+	close;
+
+L_high:
+	mes .@name$;
+	mes "Please select the job you wish";
+	mes "to change into:";
+	menu "High Swordsman",-,"High Mage",L_HMage,"High Archer",L_HArcher,"High Acolyte",L_HAcolyte,"High Merchant",L_HMerchant,"High Thief",L_HThief;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a High Swordsman?";
+	menu "No",L_thanks,"Yes",-;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Congratulations! You're now a High Swordsman.";
+	jobchange 4002;
+	close;
+
+L_nofirst2:
+	mes .@name$;
+	mes "You need to be atleast at job level 10";
+	mes "to change jobs.";
+	close;
+
+L_HMage:	
+	mes .@name$;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Are you sure you want to change to a High Mage?";
+	menu "No",-,"Yes",L_hyes2;
+	close;
+
+L_HArcher:
+	mes .@name$;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Are you sure you want to change to a High Archer?";
+	menu "No",-,"Yes",L_hyes3;
+	close;
+
+L_HAcolyte:
+	mes .@name$;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Are you sure you want to change to a High Acolyte?";	
+	menu "No",-,"Yes",L_hyes4;
+	close;
+
+L_HMerchant:
+	mes .@name$;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Are you sure you want to change to a High Merchant?";
+	menu "No",-,"Yes",L_hyes5;
+	close;
+
+L_HThief:
+	mes .@name$;
+	if(JobLevel < 10) goto L_nofirst2;
+	mes "Are you sure you want to change to a High Thief?";
+	menu "No",-,"Yes",L_hyes6;
+	close;
+
+L_hyes2:
+	mes .@name$;
+	jobchange 4003;
+	mes "Congratulations! You're now a High Mage.";
+	close;
+
+L_hyes3:
+	mes .@name$;
+	jobchange 4004;
+	mes "Congratulations! You're now a High Archer.";
+	close;
+
+L_hyes4:
+	mes .@name$;
+	jobchange 4005;
+	mes "Congratulations! You're now a High Acolyte.";
+	close;
+
+L_hyes5:
+	mes .@name$;
+	jobchange 4006;
+	mes "Congratulations! You're now a High Merchant.";
+	close;
+
+L_hyes6:
+	mes .@name$;
+	jobchange 4007;
+	mes "Congratulations! You're now a High Thief.";
+	close;
+
+L_high2:
+	mes .@name$;
+	mes "Please select the job you wish";
+	mes "to change into:";
+	menu "Lord Knight",-,"Paladin",L_Paladin,"High Wizard ",L_HighWizard,"Professor",L_Professor,"Sniper",L_Sniper,"Clown/Gypsy",L_Clown,"High Priest",L_HighPriest,"Champion",L_Champion,"Whitesmith",L_Whitesmith,"Creator",L_Creator,"Assasin Cross",L_AssasinCross,"Stalker",L_Stalker;
+	next;
+	mes .@name$;
+	mes "Are you sure you want to change to a Lord Knight?";
+	menu "No",L_bye,"Yes",-;
+	if(JobLevel < 45) goto L_nofirst2;
+	if(Class != 4002) goto L_noLK;
+	mes "Congratulations! You're now a Lord Knight.";
+	jobchange 4008;
+	close;
+
+L_noLK:
+	mes .@name$;
+	mes "You can't change from your job.";
+	close;
+
+L_Paladin:
+	mes .@name$;
+	mes "Do you want to change to a Paladin?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4002) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Paladin!";
+	jobchange 4015;
+	close;
+
+L_HighWizard:
+	mes .@name$;
+	mes "Do you want to change to a High Wizard?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4003) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a High Wizard!";
+	jobchange 4010;
+	close;
+
+L_Professor:
+	mes .@name$;
+	mes "Do you want to change to a Professor?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4003) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now Professor!";	
+	jobchange 4017;
+	close;
+
+L_Sniper:
+	mes .@name$;
+	mes "Do you want to change to a Sniper?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4004) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Sniper!";	
+	jobchange 4012;
+	close;
+
+L_Clown:
+	mes .@name$;
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4004) goto L_noLK;
+	mes "Do you want to change to a Clown/Gypsy?";
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Clown/Gypsy!";
+	jobchange 4020;
+	close;
+
+L_HighPriest:	
+	mes .@name$;
+	mes "Do you want to change to a High Priest?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4005) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a High Priest!";
+	jobchange 4009;
+	close;
+
+L_Champion:
+	mes .@name$;
+	mes "Do you want to change to a Champion?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4005) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Champion!";
+	jobchange 4016;
+	close;
+
+L_Whitesmith:
+	mes .@name$;
+	mes "Do you want to change to a Whitesmith?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4006) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Whitesmith!";
+	jobchange 4011;
+	close;
+
+L_Creator:
+	mes .@name$;
+	mes "Do you want to change to a Creator?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4006) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Creator!";	
+	jobchange 4019;
+	close;
+
+L_AssasinCross:
+	mes .@name$;
+	mes "Do you want to change to a Assasin Cross?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4007) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now an Assasin Cross!";
+	jobchange 4013;
+	close;
+
+L_Stalker:
+	mes .@name$;
+	mes "Do you want to change to a Stalker?";
+	if(JobLevel < 45) goto L_nohigh;
+	if(Class != 4007) goto L_noLK;
+	menu "No",L_bye,"Yes",-;
+	mes "Congratulations! You're now a Stalker!";
+	jobchange 4018;
+	close;
+
+L_bye:
+	close;
+
+L_third:
+	mes .@name$;
+	mes "I see that you're already a Transcendent 2nd Class,";
+	mes "I can change you to a Transcendent 3rd Class if you want.";
+	menu "I want to be a Transcendent 3rd Class",-,"Nothing",L_bye;
+	next;
+	if(rebirthcount == 1) goto L_rbnd;
+	if(rebirthcount == 2) goto L_rbnd;
+	if(rebirthcount == 3) goto L_rbnd;
+	if(rebirthcount == 4) goto L_rbnd;
+	if(rebirthcount == 5) goto L_rbnd;
+	if(rebirthcount == 6) goto L_rbnd;
+	if(rebirthcount == 7) goto L_rbnd;
+	if(rebirthcount == 8) goto L_rbnd;
+	if(rebirthcount == 9) goto L_rbnd;
+	if(rebirthcount == 10) goto L_rbnd;
+	if(BaseLevel < 500) goto L_Not3rd;
+	if(JobLevel < 119) goto L_Not3rdJ;
+	if(Class == 4008) goto L_RuneKnight;
+	if(Class == 4009) goto L_ArchBishop;
+	if(Class == 4010) goto L_Warlock;
+	if(Class == 4011) goto L_Mechanic;
+	if(Class == 4012) goto L_Ranger;
+	if(Class == 4013) goto L_GuillotineCross;
+	if(Class == 4015) goto L_RoyalGuard;
+	if(Class == 4016) goto L_Sura;
+	if(Class == 4017) goto L_Sorcerer;
+	if(Class == 4018) goto L_ShadowChaser;
+	if(Class == 4019) goto L_Genetic;
+	if(Class == 4020) goto L_Minstrel;
+	if(Class == 4021) goto L_Wanderer;
+
+L_Not3rd:
+	mes .@name$;
+	mes "I'm sorry but I can't change you into a 3rd Class";
+	mes "if you are not level 500.";
+	close;
+	
+L_Not3rdJ:
+	mes .@name$;
+	mes "I'm sorry but I can't change you into a 3rd Class";
+	mes "if you are not at job level 120.";
+	close;
+
+L_Not3rd2:
+	mes .@name$;
+	mes "I'm sorry but I can't change you into a 3rd Class";
+	mes "if you are not level 500.";
+	close;
+
+L_Not3rdJ2:
+	mes .@name$;
+	mes "I'm sorry but I can't change you into a 3rd Class";
+	mes "if you are not at job level 120.";
+	close;
+	
+
+L_third2:
+	if(rebirthcount == 1) goto L_rbnd;
+	if(rebirthcount == 2) goto L_rbnd;
+	if(rebirthcount == 3) goto L_rbnd;
+	if(rebirthcount == 4) goto L_rbnd;
+	if(rebirthcount == 5) goto L_rbnd;
+	if(rebirthcount == 6) goto L_rbnd;
+	if(rebirthcount == 7) goto L_rbnd;
+	if(rebirthcount == 8) goto L_rbnd;
+	if(rebirthcount == 9) goto L_rbnd;
+	if(rebirthcount == 10) goto L_rbnd;
+	if(BaseLevel < 500) goto L_Not3rd2;
+	if(JobLevel < 120) goto L_Not3rdJ2;
+	if(Class == 7) goto L_RuneKnight2;
+	if(Class == 8) goto L_ArchBishop2;
+	if(Class == 9) goto L_Warlock2;
+	if(Class == 10) goto L_Mechanic2;
+	if(Class == 11) goto L_Ranger2;
+	if(Class == 12) goto L_GuillotineCross2;
+	if(Class == 14) goto L_RoyalGuard2;
+	if(Class == 15) goto L_Sura2;
+	if(Class == 16) goto L_Sorcerer2;
+	if(Class == 17) goto L_ShadowChaser2;
+	if(Class == 18) goto L_Genetic2;
+	if(Class == 19) goto L_Minstrel2;
+	if(Class == 20) goto L_Wanderer2;
+
+L_RuneKnight:
+	next;
+	mes .@name$;
+	mes "Do you want to change to a Rune Knight?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Rune Knight!";
+	jobchange 4060;
+	set job_complete,1;
+	close;
+
+L_ArchBishop:
+	mes .@name$;
+	mes "Do you want to change to an Arch Bishop?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now an Arch Bishop!";
+	jobchange 4063;
+	set job_complete,1;
+	close;
+
+
+L_Warlock:
+	mes .@name$;
+	mes "Do you want to change to a Warlock?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Warlock!";
+	jobchange 4061;
+	set job_complete,1;
+	close;
+
+
+L_Mechanic:
+	mes .@name$;
+	mes "Do you want to change to a Mechanic?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Mechanic!";
+	jobchange 4064;
+	set job_complete,1;
+	close;
+
+
+L_Ranger:
+	mes .@name$;
+	mes "Do you want to change to a Ranger?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Ranger!";
+	jobchange 4062;
+	set job_complete,1;
+	next;
+	set JobLevel,10;
+	getitem 6124,1;
+	close;
+
+
+L_GuillotineCross:
+	mes .@name$;
+	mes "Do you want to change to a Guillotine Cross?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Guillotine Cross!";
+	jobchange 4065;
+	set job_complete,1;
+	close;
+
+
+L_RoyalGuard:
+	mes .@name$;
+	mes "Do you want to change to a Royal Guard?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Royal Guard!";
+	jobchange 4073;
+	set job_complete,1;
+	close;
+
+
+L_Sura:
+	mes .@name$;
+	mes "Do you want to change to a Sura?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Sura!";
+	jobchange 4077;
+	set job_complete,1;
+	close;
+
+
+L_Sorcerer:
+	mes .@name$;
+	mes "Do you want to change to a Sorcerer?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Sorcerer!";
+	jobchange 4074;
+	set job_complete,1;
+	close;
+
+	
+L_ShadowChaser:
+	mes .@name$;
+	mes "Do you want to change to a Shadow Chaser?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Shadow Chaser!";
+	jobchange 4079;
+	set job_complete,1;
+	close;
+
+
+L_Genetic:
+	mes .@name$;
+	mes "Do you want to change to a Genetic?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Genetic!";
+	jobchange 4078;
+	set job_complete,1;
+	close;
+
+
+L_Minstrel:
+	mes .@name$;
+	mes "Do you want to change to a Minstrel?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Minstrel!";
+	jobchange 4075;
+	set job_complete,1;
+	close;
+
+
+
+L_Wanderer:
+	mes .@name$;
+	mes "Do you want to change to a Wanderer?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Wanderer!";
+	jobchange 4076;
+	set job_complete,1;
+	close;
+
+
+L_RuneKnight2:
+	mes .@name$;
+	mes "Do you want to change to a Rune Knight?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Rune Knight!";
+	jobchange 4054;
+	set job_complete,1;
+	close;
+
+
+
+L_ArchBishop2:
+	mes .@name$;
+	mes "Do you want to change to a Arch Bishop?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Arch Bishop!";
+	jobchange 4057;
+	set job_complete,1;
+	close;
+
+
+L_Warlock2:
+	mes .@name$;
+	mes "Do you want to change to a Warlock?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Warlock!";
+	jobchange 4055;
+	set job_complete,1;
+	close;
+
+
+
+L_Mechanic2:
+	mes .@name$;
+	mes "Do you want to change to a Mechanic?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Mechanic!";
+	jobchange 4058;
+	set job_complete,1;
+	close;
+
+
+L_Ranger2:
+	mes .@name$;
+	mes "Do you want to change to a Ranger?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Ranger!";
+	jobchange 4056;
+	set job_complete,1;
+	next;
+	set Joblevel,10;
+	getitem 6124,1;
+	close;
+
+
+L_GuillotineCross2:
+	mes .@name$;
+	mes "Do you want to change to a Guillotine Cross?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Guillotine Cross!";
+	jobchange 4059;
+	set job_complete,1;
+	close;
+
+
+L_RoyalGuard2:
+	mes .@name$;
+	mes "Do you want to change to a Royal Guard?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Royal Guard!";
+	jobchange 4066;
+	set job_complete,1;
+	close;
+
+
+L_Sura2:
+	mes .@name$;
+	mes "Do you want to change to a Sura?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Sura!";
+	jobchange 4070;
+	set job_complete,1;
+	close;
+
+	
+
+L_Sorcerer2:
+	mes .@name$;
+	mes "Do you want to change to a Sorcerer?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Sorcerer!";
+	jobchange 4067;
+	set job_complete,1;
+	close;
+
+
+L_ShadowChaser2:
+	mes .@name$;
+	mes "Do you want to change to a Shadow Chaser?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Shadow Chaser!";
+	jobchange 4072;
+	set job_complete,1;
+	close;
+
+
+
+L_Genetic2:
+	mes .@name$;
+	mes "Do you want to change to a Genetic?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Genetic!";
+	jobchange 4071;
+	set job_complete,1;
+	close;
+
+
+L_Minstrel2:
+	mes .@name$;
+	mes "Do you want to change to a Minstrel?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Minstrel!";
+	jobchange 4068;
+	set job_complete,1;
+	close;
+
+
+
+L_Wanderer2:
+	mes .@name$;
+	mes "Do you want to change to a Wanderer?";
+	menu "No",L_bye,"Yes",-;
+	mes .@name$;
+	mes "Congratulations! You're now a Wanderer!";
+	jobchange 4069;
+	set job_complete,1;
+	close;
+
+
+
+
+L_nohigh:
+	mes .@name$;
+	mes "You can't change unless you're at job level 45";
+	close;
+
+L_skp:
+	mes .@name$;
+	mes "Please use all your skill points first before changing jobs.";
+	close;
+
+L_none:
+	mes .@name$;
+	mes "You are already a 3rd Class, that's the last job you can change into.";
+	close;
+
+L_nomore:
+	mes .@name$;
+	mes "Sorry, there are no more further jobs for your class.";
+	close;
+L_rbnd:
+	mes .@name$;
+	mes "Sorry, but you have master reborned, reborned classes can't become 3rd classes.";
+	close;
+
+L_taekwon2:
+	mes .@name$;
+	mes "I see that you're a taekwon,";
+	mes "I can change you to a Soul Linker or to a Star Gladiator.";
+	mes "To what job would you like to change?";
+	menu "Soul Linker",-,"Star Gladiator",L_StarGlad,"Nothing",L_bye;
+	mes "Are you sure you want to change into a Soul Linker?";
+	menu "Yes",-,"No",L_bye;
+	mes .@name$;
+	mes "Congratulations! You're now a Soul Linker.";
+	jobchange 4049;
+	close;
+
+L_StarGlad:
+	mes .@name$;
+	mes "Are you sure you want to change into a Star Gladiator?";
+	menu "Yes",-,"No",L_bye;
+	mes .@name$;
+	mes "Congratulations! You're now a Star Gladiator.";
+	jobchange 4047;
+	close;
+
+L_baby3rd:
+	mes .@name$;
+	mes "I see that you're a Baby 2nd Class,";
+	mes "I can change you to a Baby 3rd Class";
+	mes "if you want.";
+	menu "Sure",-,"No thanks",L_thanks;
+	if(rebirthcount == 1) goto L_rbnd;
+	if(rebirthcount == 2) goto L_rbnd;
+	if(rebirthcount == 3) goto L_rbnd;
+	if(rebirthcount == 4) goto L_rbnd;
+	if(rebirthcount == 5) goto L_rbnd;
+	if(rebirthcount == 6) goto L_rbnd;
+	if(rebirthcount == 7) goto L_rbnd;
+	if(rebirthcount == 8) goto L_rbnd;
+	if(rebirthcount == 9) goto L_rbnd;
+	if(rebirthcount == 10) goto L_rbnd;
+	next;	
+	if(Class == 4030) goto L_babyrune;
+	if(Class == 4031) goto L_babyarch;
+	if(Class == 4032) goto L_babywarlock;
+	if(Class == 4033) goto L_babymecha;
+	if(Class == 4034) goto L_babyranger;
+	if(Class == 4035) goto L_babygitx;
+	if(Class == 4037) goto L_babyarg;
+	if(Class == 4038) goto L_babysura;
+	if(Class == 4039) goto L_babysorc;
+	if(Class == 4040) goto L_babyshadow;
+	if(Class == 4041) goto L_babygene;
+	if(Class == 4042) goto L_babyminst;
+	if(Class == 4043) goto L_babywand;
+	end;
+	
+L_babyrune:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Rune Knight?";
+	menu "No",L_bye,"Yes",-;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	next;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Rune Knight.";
+	jobchange 4096;
+	close;
+
+L_Baseno:
+	mes .@name$;
+	mes "You do not meet the requirements to change jobs.";
+	mes "Make sure you Level 300.";
+	close;
+
+L_Jobno:
+	mes .@name$;
+	mes "Sorry but your job level is not high enough to change.";
+	mes "The minimum required is 70.";
+	close;
+
+
+
+L_babyarch:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Arch Bishop?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Arch Bishop.";
+	jobchange 4099;
+	close;
+
+L_babywarlock:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Warlock?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Warlock.";
+	jobchange 4097;
+	close;
+
+L_babymecha:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Mechanic?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Mechanic.";
+	jobchange 4100;
+	close;
+
+L_babyranger:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Ranger?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Ranger.";
+	jobchange 4098;
+	next;
+	set JobLevel,10;
+	getitem 6124,1;
+	close;
+
+L_babygitx:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Guillotine Cross?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Guillotine Cross.";
+	jobchange 4101;
+	close;
+
+L_babyarg:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Royal Guard?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Royal Guard.";
+	jobchange 4102;
+	close;
+
+L_babysura:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Sura?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Sura.";
+	jobchange 4106;
+	close;
+
+L_babysorc:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Sorcerer?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Sorcerer.";
+	jobchange 4103;
+	close;
+
+L_babyshadow:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Shadow Chaser?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Shadow Chaser.";
+	jobchange 4108;
+	close;
+
+L_babygene:
+
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Genetic?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Genetic.";
+	jobchange 4107;
+	close;
+
+L_babyminst:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Minstrel?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Minstrel.";
+	jobchange 4104;
+	close;
+
+L_babywand:
+	mes .@name$;
+	mes "Are you sure you want to change to a Baby Wanderer?";
+	menu "No",L_bye,"Yes",-;
+	next;
+	if(BaseLevel < 99) goto L_Baseno;
+	if(JobLevel < 70) goto L_Jobno;
+	mes .@name$;
+	mes "Congratulations! You're now a Baby Wanderer.";
+	jobchange 4105;
+	close;
+
+L_Thanks:
+	next;
+	mes .@name$;
+	mes "Alright.";
+	close;
+
+L_bye2:
+	next;
+	mes .@name$;
+	mes "Come back when you change your mind.";
+	close;
+
+}

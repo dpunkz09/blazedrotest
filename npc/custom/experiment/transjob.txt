@@ -1,0 +1,173 @@
+prontera,156,181,5	script	Khaye	485,{
+	
+	if(#freebie_quest == 0){
+	mes "[Khaye]";
+	mes "Nice to meet you "+ strcharinfo ( 0 ) +", my name is Khaye";
+	mes "Welcome to ^E066FFBlazedRO!^000000";
+	mes "I see that you're new here so to help you out I'd like to give you these";
+	mes "items as a gift to show how much we appreciate you here!";
+next;
+	skilleffect 34,0; sc_start SC_BLESSING,3600000,20;
+	skilleffect 29,0; sc_start SC_INCREASEAGI,3600000,20;
+	skilleffect 361,0; sc_start SC_ASSUMPTIO,3600000,5;
+	getitem	4142,1;
+	getitem 1705,1;
+	getitem 1108,1;
+	getitem 1208,1;
+	getitem 1602,1;
+	getitem 11501,200;
+	getitem 2289,1;
+	getitem	25023,1;
+	getitem 25024,1;
+	getitem 25025,1;
+	getitem 25026,1;
+	set Zeny,Zeny+500000;
+	set #freebie_quest,1;
+	savepoint "prontera",156,191;
+next;
+	mes "[Khaye]";
+	mes "I'll change you into a job that you want";
+	mes "but be warned you can only change your job once";
+	mes "so choose carefully!";
+	next;
+	mes "[Khaye]";
+	mes "If you cancel on me you will lose your chance to have";
+	mes "instant level and job!";
+	next;
+	switch(select("Lord Knight:Paladin:Assassin Cross:Stalker:High Priest:Champion:High Wizard:Professor:Sniper:Clown/Gypsy:Gunslinger:Ninja:Star Gladiator:Creator:Whitesmith:Soul Linker")){
+
+Case 1:
+	jobchange 4008;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Lord Knight!";
+	close;
+Case 2:
+	jobchange 4015;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Paladin!";
+	close;
+Case 3:
+	jobchange 4013;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now an Assassin Cross!";
+	close;
+Case 4:
+	jobchange 4018;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Stalker!";
+	close;
+Case 5:
+	jobchange 4009;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a High Priest!";
+	close;
+Case 6:
+	jobchange 4016;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Champion!";
+	close;
+Case 7:
+	jobchange 4010;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a High Wizard!";
+	close;
+Case 8:
+	jobchange 4017;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Professor!";
+	close;
+Case 9:
+	jobchange 4012;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Sniper!";
+	close;
+Case 10:
+	if(Sex == 0){
+	jobchange 4021;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Gypsy!";
+	}
+	else {
+	jobchange 4020;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Clown!";
+	}
+	close;
+Case 11:
+	jobchange 24;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Gunslinger!";
+	close;
+Case 12:
+	jobchange 25;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Ninja!";
+	close;
+Case 13:
+	jobchange 4047;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Star Gladiator!";
+	close;
+Case 14:
+	jobchange 4019;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Creator!";
+	close;
+Case 15:
+	jobchange 4011;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Whitesmith!";
+	close;
+Case 16:
+	jobchange 4049;
+	set BaseLevel,255;
+	set JobLevel,120;
+	mes "[Khaye]";
+	mes "Congratulations! You are now a Soul Linker!";
+	close;
+
+}
+
+	close;
+	}
+
+if(#freebie_quest == 1){
+	mes "[Khaye]";
+	mes "You already took your freebies!";
+	mes "Have fun in ^E066FFBlazedRO!^000000";
+	close;
+	}
+	
+}

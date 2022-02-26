@@ -1,0 +1,65 @@
+prontera,160,187,4	script	Freebies	123,{
+	mes "[Hello]";
+	mes "[I can give you a free gift based on your future job.]";
+	mes "[Please choose the correct item for the future job]";
+
+	if(!#Freebie) {
+		mes "Select one:";
+		next;
+		switch(select("Swordsman:Magician:Archer:Acolyte:Merchant:Thief")) {
+			case 1:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Swordsman
+				break;
+
+			case 2:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Magician
+				break;
+
+			case 3:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Archer
+				break;
+				
+			case 4:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Acolyte
+				break;
+			
+			case 5:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Merchant
+				break;
+			
+			case 6:
+				getitem 13758,1;
+				getitem 969,20;
+				getitem 1108,1;
+				getitem 2104,1;
+				getitem 4043,4; //Item for Thief
+				break;
+				
+			}
+			set #Freebie, 1;
+			close;
+	}
+	OnInit:
+	waitingroom "Get your freebies here ! ",0;
+	end;
+}
